@@ -1,0 +1,183 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pyconformal"
+version = "0.0.1"
+description = "Conformal mapping for Python — a numerical implementation of the conformal applications developed in Vega Penagos & Olivero Zapata (2015)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+    { name = "PyConformal Engine Maintainers" },
+]
+keywords = [
+    "complex analysis",
+    "conformal mapping",
+    "schwarz-christoffel",
+    "mobius transformation",
+    "scientific computing",
+]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.11",
+    "matplotlib>=3.7",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+    "pytest-benchmark>=4.0",
+    "hypothesis>=6.100",
+    "ruff>=0.6",
+    "mypy>=1.10",
+    "pre-commit>=3.7",
+]
+docs = [
+    "sphinx>=7.0",
+    "myst-parser>=2.0",
+    "pydata-sphinx-theme>=0.15",
+    "jupyter>=1.0",
+    "nbsphinx>=0.9",
+]
+notebooks = [
+    "jupyter>=1.0",
+    "ipykernel>=6.29",
+]
+
+[project.urls]
+Homepage = "https://github.com/cavegap/pyconformal-engine"
+Repository = "https://github.com/cavegap/pyconformal-engine"
+Documentation = "https://cavegap.github.io/pyconformal-engine/"
+Issues = "https://github.com/cavegap/pyconformal-engine/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pyconformal"]
+
+# ---------------------------------------------------------------------------
+# Ruff: lint + format
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "N",   # pep8-naming
+    "RUF", # ruff-specific
+    "SIM", # flake8-simplify
+    "TID", # flake8-tidy-imports
+    "PT",  # flake8-pytest-style
+    "D",   # pydocstyle
+]
+ignore = [
+    "D203",   # 1 blank line required before class docstring (conflicts with D211)
+    "D213",   # multi-line summary should start at the second line (conflicts with D212)
+    "D105",   # missing docstring in magic method (__repr__, __hash__ etc. are self-evident)
+    "N803",   # argument names: we use mathematical names like z, w, A, B
+    "N806",   # variable names: same reason — math uses single-letter capitals
+    "RUF002", # ambiguous unicode in docstrings: we intentionally use ∂, π, λ, ≠, etc.
+    "RUF003", # ambiguous unicode in comments: same reason
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "D",     # don't require docstrings in tests
+    "N802",  # tests can have mathematical capitals in names (e.g. "P" for group P)
+]
+"notebooks/**" = [
+    "D",       # don't require docstrings in notebook cells
+    "F401",    # imports for reader convenience even if not exercised
+    "F541",    # f-strings without placeholders are fine for consistency
+    "C408",    # dict() literal vs {...} — readability call in notebooks
+    "RUF059",  # unused unpacked variables like `fig, ax = plt.subplots()`
+    "E501",    # long lines for LaTeX/markdown content
+    "I001",    # import ordering in tutorial cells follows pedagogical order
+]
+"scripts/**" = [
+    "E501",  # long lines for embedded LaTeX
+]
+"**/__init__.py" = ["D104"]  # missing docstring in public package
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# ---------------------------------------------------------------------------
+# Mypy: strict type checking
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+show_error_codes = true
+files = ["src", "tests"]
+
+[[tool.mypy.overrides]]
+module = ["scipy.*"]
+ignore_missing_imports = true
+
+# ---------------------------------------------------------------------------
+# Pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=pyconformal",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "benchmark: marks benchmarking tests",
+    "visual: marks tests that produce visual output",
+]
+
+[tool.coverage.run]
+source = ["src/pyconformal"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]

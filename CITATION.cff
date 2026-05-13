@@ -1,0 +1,54 @@
+cff-version: 1.2.0
+title: "PyConformal Engine"
+message: >-
+  If you use this software, please cite both the software itself
+  and the underlying thesis listed in the `references` field.
+type: software
+authors:
+  - family-names: "Vega Penagos"
+    given-names: "Cesar A"
+    affiliation: "N/A"
+    # email: replace_me@example.com
+    # orcid: "https://orcid.org/0000-0000-0000-0000"
+repository-code: "https://github.com/cavegap/pyconformal-engine"
+url: "https://cavegap.github.io/pyconformal-engine/"
+abstract: >-
+  PyConformal Engine is a Python library for conformal mappings,
+  implementing the mathematical content of the undergraduate thesis
+  "Implementación en software de aplicaciones conformes" (Vega Penagos
+  & Olivero Zapata, Universidad del Tolima, 2015) as a numerical,
+  open-source replacement for the original Maple 17 implementation.
+  The library covers angle-preserving linear transformations (group P),
+  holomorphic and antiholomorphic maps, Möbius transformations,
+  elementary and trigonometric mappings, and the Schwarz-Christoffel
+  transformation. The flagship example is the Mercator-style projection
+  of the lunar surface described in Chapter 4 of the thesis.
+keywords:
+  - conformal mapping
+  - complex analysis
+  - Schwarz-Christoffel
+  - Möbius transformation
+  - scientific computing
+  - cartographic projection
+license: MIT
+version: "0.0.1"
+date-released: "2026-01-01"
+references:
+  - type: thesis
+    title: "Implementación en software de aplicaciones conformes"
+    authors:
+      - family-names: "Vega Penagos"
+        given-names: "Cesar Augusto"
+      - family-names: "Olivero Zapata"
+        given-names: "Hernán Alirio"
+    thesis-type: "Undergraduate thesis"
+    institution:
+      name: "Universidad del Tolima"
+      address: "Ibagué, Tolima, Colombia"
+      department: "Facultad de Ciencias — Programa de Matemáticas con énfasis en Estadística"
+    year: 2015
+    month: 12
+    notes: >-
+      Director: Mg. Juan Pablo Yáñez Puentes.
+      Jurados: Dr. Arnold Oostra Van Noppen, Dr. Leonardo Solanilla Chavarro.
+      Calificación: 4.8 (Meritorio). Sustentación: 17 de diciembre de 2015.
