@@ -44,8 +44,8 @@ not a calibrated heat flux or a fabricated device simulation.
 ```python
 from pyconformal.sc import square_heat_temperature
 
-print(square_heat_temperature(1j))            # 60 °C
-print(square_heat_temperature(0j))            # 100 °C
+print(square_heat_temperature(1j))  # 60 °C
+print(square_heat_temperature(0j))  # 100 °C
 print(square_heat_temperature(1j, cold=0, hot=1))  # 0.5
 ```
 

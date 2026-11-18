@@ -18,6 +18,9 @@ Version-control commits remain the authoritative file history.
   checked over HTTP at desktop and mobile viewport sizes. Publication
   status is established by the matching GitHub workflow and release,
   rather than by this local record alone.
+- Remote CI additionally checks Python code fences in Markdown with Ruff
+  0.17.5. Aligned those snippets and pinned the formatter version so a
+  fresh development installation uses the same formatting rules.
 
 ## 2026-11-18: thesis companion and completed teaching views
 

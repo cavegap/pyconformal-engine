@@ -129,7 +129,7 @@ Reflect a point across the real axis.
 from pyconformal.linear import Reflection
 
 reflect = Reflection(0)
-print(reflect(1 + 2j))                # (1-2j)
+print(reflect(1 + 2j))  # (1-2j)
 print(reflect.preserves_orientation)  # False
 ```
 

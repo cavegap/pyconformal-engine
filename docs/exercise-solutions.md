@@ -23,7 +23,7 @@ from pyconformal.linear import Reflection
 transform = Reflection(pi / 3)
 vector = np.array([1.0, 0.0])
 print(transform.matrix @ vector)  # [0.5, sqrt(3)/2]
-print(transform(1 + 0j))         # same vector, represented as a complex point
+print(transform(1 + 0j))  # same vector, represented as a complex point
 ```
 
 The array call interface represents an array of complex points; use the
