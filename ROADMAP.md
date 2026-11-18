@@ -1,4 +1,24 @@
 # 📄 PROYECTO: PyConformal Engine
+
+[Applications roadmap and validation criteria (English)](docs/applications-roadmap.md)
+
+## Actualización de implementación: 18 de noviembre de 2026
+
+La [guía de lectura junto a la tesis](docs/thesis-guide.md) conecta las
+figuras, demos y [diez ejercicios para el lector](docs/exercises.md).
+Se incorporaron las reconstrucciones del Grupo P y de las tangentes de
+la Figura 3.2, un segundo problema SC de conducción de calor y el
+[atlas interactivo unificado de Peirce](examples/peirce-atlas.html).
+Las [instrucciones de reproducción](docs/reproducibility.md),
+[soluciones orientativas](docs/exercise-solutions.md) y el
+[registro de cambios](docs/development-log.md) documentan esta etapa.
+Las fases generales que siguen son objetivos de diseño; el estado de
+los ejemplos implementados está en el roadmap de aplicaciones.
+Los [trabajos futuros](docs/future-work.md) mantienen preguntas abiertas
+y criterios de verificación, incluido el problema de parámetros SC general.
+
+## Visión y fases del proyecto
+
 **De la Matemática Simbólica (Maple 17) a una Librería Científica de Alto Rendimiento (Python)**
 
 > **Tesis base:** Vega Penagos, C. A. & Olivero Zapata, H. A. (2015). *Implementación en software de aplicaciones conformes*. Universidad del Tolima, Facultad de Ciencias, Programa de Matemáticas con énfasis en Estadística. Director: Mg. Juan Pablo Yáñez Puentes. Jurados: Dr. Arnold Oostra Van Noppen, Dr. Leonardo Solanilla Chavarro. Calificación: 4.8 (Meritorio), 17 de diciembre de 2015.

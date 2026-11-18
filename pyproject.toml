@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pyconformal"
-version = "0.0.1"
+version = "0.1.0a1"
 description = "Conformal mapping for Python — a numerical implementation of the conformal applications developed in Vega Penagos & Olivero Zapata (2015)."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -37,7 +37,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+site = ["Markdown>=3.6,<4"]
 dev = [
+    "Markdown>=3.6,<4",
+    "types-Markdown>=3.6",
     "pytest>=8.0",
     "pytest-cov>=4.1",
     "pytest-benchmark>=4.0",

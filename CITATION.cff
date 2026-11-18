@@ -17,12 +17,12 @@ abstract: >-
   implementing the mathematical content of the undergraduate thesis
   "Implementación en software de aplicaciones conformes" (Vega Penagos
   & Olivero Zapata, Universidad del Tolima, 2015) as a numerical,
-  open-source replacement for the original Maple 17 implementation.
-  The library covers angle-preserving linear transformations (group P),
-  holomorphic and antiholomorphic maps, Möbius transformations,
-  elementary and trigonometric mappings, and the Schwarz-Christoffel
-  transformation. The flagship example is the Mercator-style projection
-  of the lunar surface described in Chapter 4 of the thesis.
+  open-source continuation of the original Maple 17 implementation.
+  This research preview provides angle-preserving linear maps (group P),
+  the Cayley and exponential maps, a fixed-prevertex Schwarz-Christoffel
+  square, ideal electrostatic and thermal examples, and spherical Peirce
+  cartography. Interactive examples and reader exercises accompany the
+  thesis. General polygon mappings remain future work.
 keywords:
   - conformal mapping
   - complex analysis
@@ -31,8 +31,8 @@ keywords:
   - scientific computing
   - cartographic projection
 license: MIT
-version: "0.0.1"
-date-released: "2026-01-01"
+version: "0.1.0a1"
+date-released: "2026-11-18"
 references:
   - type: thesis
     title: "Implementación en software de aplicaciones conformes"

@@ -80,7 +80,10 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Run tests
-        run: pytest -v
+        run: python -m pytest -v
+
+      - name: Reader exercise checkpoints
+        run: python examples/reader_checks.py
 
       - name: Upload coverage to Codecov
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'

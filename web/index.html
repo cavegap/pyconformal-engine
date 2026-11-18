@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Explore conformal maps through interactive figures, reproducible Python examples and a guided companion to a mathematics thesis.">
+  <title>PyConformal Engine · from a thesis to experiments</title>
+  <link rel="canonical" href="https://cavegap.github.io/pyconformal-engine/">
+  <meta property="og:title" content="PyConformal Engine · conformal maps you can explore">
+  <meta property="og:description" content="Interactive mathematical figures, a lunar Peirce atlas and ten exercises alongside the original thesis.">
+  <meta property="og:image" content="https://cavegap.github.io/pyconformal-engine/examples/lunar-thesis-tile.jpg">
+  <meta property="og:url" content="https://cavegap.github.io/pyconformal-engine/">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<header class="site-header"><a class="brand" href="index.html">PyConformal Engine</a><nav aria-label="Main"><a href="examples/index.html">Gallery</a><a href="docs/thesis-guide.html">Thesis companion</a><a href="docs/exercises.html">Exercises</a><a href="https://github.com/cavegap/pyconformal-engine">GitHub</a></nav></header>
+<main>
+  <section class="hero">
+    <div><p class="eyebrow">Research preview · v0.1.0a1</p><h1>Conformal maps you can explore.</h1><p class="lead">Move a point, follow its image and check the mathematics. A 2015 thesis becomes a set of Python experiments, interactive figures and reader exercises.</p><div class="actions"><a class="button" href="examples/conformal-angle.html">Explore curves and tangents</a><a href="docs/thesis-guide.html">Start with the thesis</a></div><p class="small">Experimental software for learning and research. Each application states its assumptions and validation.</p></div>
+    <figure><a href="examples/peirce-atlas.html"><img src="examples/lunar-thesis-tile.jpg" alt="The complete lunar surface arranged in Peirce’s quincuncial square, with the northern hemisphere in the central diamond." width="880" height="880"></a><figcaption>The whole Moon in one square. Explore <a href="examples/peirce-atlas.html">Peirce’s interactive atlas</a> to compare imagery, poles, scale and joined tiles.</figcaption></figure>
+  </section>
+  <section class="journeys" aria-labelledby="choose"><h2 id="choose">Choose a route</h2>
+    <article><div class="route-heading"><span>Learn</span><h3>What does a conformal map preserve?</h3></div><div><p>Start with vectors, then compare curved paths and their tangent images. Discover why a nonzero derivative matters and what changes at a critical point.</p><ol><li><a href="examples/group-p.html">Move the vectors in Group P</a></li><li><a href="examples/conformal-angle.html">Compare curves and tangents</a></li><li><a href="examples/object-reveal.html">Recover a house with a logarithm</a></li><li><a href="docs/exercises.html#e1-vector-angles-and-orientation">Work through exercises E1–E5</a></li></ol></div></article>
+    <article><div class="route-heading"><span>Apply</span><h3>Solve a simpler boundary problem.</h3></div><div><p>The Schwarz–Christoffel square connects complex analysis to harmonic fields. Explore an exact thermal solution and ideal models for impedance and capacitive coupling.</p><ol><li><a href="examples/schwarz-christoffel-square.html">Map the half-plane to a square</a></li><li><a href="examples/schwarz-christoffel-heat.html">Follow temperature through the map</a></li><li><a href="examples/coplanar-waveguide.html">Study a 50 Ω coplanar guide</a> and <a href="examples/coplanar-sensor.html">a capacitive sensor</a></li><li><a href="docs/exercises.html#e6-a-second-sc-boundary-problem">Work through exercises E6–E7</a></li></ol></div></article>
+    <article><div class="route-heading"><span>Map the Moon</span><h3>Follow a contour from sphere to plane.</h3></div><div><p>Trace the same point on a lunar globe, in Mercator coordinates and under a chosen transformation. Then explore the two hemispheres, cuts and repeated poles in Peirce’s projection.</p><ol><li><a href="examples/lunar-thesis-interactive.html">Follow the thesis contour</a></li><li><a href="examples/peirce-atlas.html">Switch views in the Peirce atlas</a></li><li><a href="docs/lunar-thesis-outlines.html">Read the archival recovery and registration notes</a></li><li><a href="docs/exercises.html#e8-what-does-local-scale-measure">Work through exercises E8–E10</a></li></ol></div></article>
+  </section>
+  <section class="evidence"><h2>Read, reproduce, question.</h2><p>The demonstrations accompany <em>Implementación en software de aplicaciones conformes</em>, by C. A. Vega Penagos and H. A. Olivero Zapata, Universidad del Tolima (2015). New reconstructions and applications are identified separately from the original results.</p><div class="actions"><a href="docs/reproducibility.html">Reproduction commands</a><a href="docs/exercise-solutions.html">Worked checkpoints</a><a href="docs/future-work.html">Open research questions</a><a href="docs/releases/v0.1.0a1.html">Preview release notes</a></div><pre><code>python -m pip install -e ".[dev]"
+python examples/reader_checks.py
+python -m pytest</code></pre><p><a href="https://github.com/cavegap/pyconformal-engine/issues/new/choose">Share classroom feedback or a reproducible issue</a>. Include the map, inputs and the result you expected.</p></section>
+</main>
+<footer class="site-footer"><p>Lunar imagery: NASA / GSFC / Arizona State University. <a href="docs/peirce-mosaic.html">Source and attribution</a>.</p><p><a href="thesis/IMPLEMENTACION_EN_SOFTWARE_DE_APLICACIONES_CONFORMES.pdf">Original thesis</a> · <a href="README.html">Repository guide</a> · <a href="https://github.com/cavegap/pyconformal-engine">Source code</a></p></footer>
+</body>
+</html>

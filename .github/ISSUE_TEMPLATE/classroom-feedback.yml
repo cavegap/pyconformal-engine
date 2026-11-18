@@ -1,0 +1,34 @@
+name: Classroom or reader feedback
+description: Report an unclear explanation, exercise or interactive figure.
+title: "[Reader feedback] "
+body:
+  - type: dropdown
+    id: route
+    attributes:
+      label: Reading route
+      options:
+        - Learning conformality
+        - Boundary problems and electronics
+        - Lunar cartography
+        - Installation or reproduction
+    validations:
+      required: true
+  - type: input
+    id: example
+    attributes:
+      label: Example, exercise or page
+      placeholder: "For example: Exercise E2 / curves and tangents"
+    validations:
+      required: true
+  - type: textarea
+    id: observation
+    attributes:
+      label: What did you expect, and what did you observe?
+      description: Include the map and point or parameter values. A thesis page reference helps.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: How did you run it?
+      description: Browser and version, or Python version and reproduction command.
