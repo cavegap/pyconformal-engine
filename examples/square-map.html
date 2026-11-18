@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The square map | PyConformal Engine</title>
+  <style>
+    :root { color-scheme: light; font-family: "Inter", system-ui, sans-serif; color: #142e38; background: #f3f7f6; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1160px; margin: auto; padding: clamp(20px, 5vw, 58px); }
+    header { margin-bottom: 28px; }
+    .project { color: #276860; font-size: .85rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    h1 { margin: 6px 0 10px; font: 500 clamp(2.4rem, 6vw, 4.4rem)/1.04 "Instrument Serif", Georgia, serif; }
+    p { line-height: 1.55; }
+    header p { max-width: 60ch; margin: 0; }
+    .plots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    figure { margin: 0; padding: 14px; border: 1px solid #cadbd6; border-radius: 14px; background: #fff; }
+    figcaption { font-weight: 700; padding: 1px 4px 8px; }
+    canvas { display: block; width: 100%; aspect-ratio: 1; }
+    #source { touch-action: none; cursor: crosshair; }
+    .controls, .readouts { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; margin: 20px 0; }
+    label { display: grid; gap: 4px; flex: 1 1 130px; font-weight: 600; font-size: .9rem; }
+    input[type="range"] { accent-color: #146d63; min-width: 0; }
+    button { padding: 8px 13px; border: 1px solid #80a69d; border-radius: 6px; background: #fff; color: inherit; font: inherit; }
+    button:focus-visible, input:focus-visible { outline: 3px solid #146d63; outline-offset: 3px; }
+    .readouts { margin-bottom: 8px; padding: 12px 0; border-block: 1px solid #cadbd6; }
+    .readouts div { flex: 1 1 130px; }
+    dt { font-size: .8rem; color: #44635e; }
+    dd { margin: 4px 0 0; font: 600 .95rem "IBM Plex Mono", ui-monospace, monospace; }
+    #explanation { min-height: 3.1em; margin: 10px 0; max-width: 76ch; }
+    footer { font-size: .85rem; color: #44635e; }
+    @media (max-width: 640px) { .plots { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="project">PyConformal Engine</div>
+    <h1>The square map <i>w</i> = <i>z</i>²</h1>
+    <p>Drag P in the source plane or use the sliders. Follow its image P′ and compare
+      the local directions. Try the origin to see when their angle doubles.</p>
+  </header>
+  <p><a href="object-reveal.html">New object example · a logarithm reveals a house</a> · <a href="group-p.html">Move the rays in Group P</a></p>
+  <div class="plots">
+    <figure>
+      <figcaption>Source · <i>z</i>-plane</figcaption>
+      <canvas id="source" role="img" aria-label="Source grid, Universidad del Tolima outline, and directions at P"></canvas>
+    </figure>
+    <figure>
+      <figcaption>Image · <i>w</i>-plane</figcaption>
+      <canvas id="image" role="img" aria-label="Mapped grid, transformed university outline, and directions at P prime"></canvas>
+    </figure>
+  </div>
+  <div class="controls">
+    <label for="real">Real part of P <input id="real" type="range" min="-1.8" max="1.8" step=".01" value=".86"></label>
+    <label for="imag">Imaginary part of P <input id="imag" type="range" min="-1.8" max="1.8" step=".01" value=".78"></label>
+    <label for="angle">Source angle (degrees) <input id="angle" type="range" min="15" max="85" step="1" value="40"></label>
+    <button type="button" id="origin">Move P to the origin</button>
+    <button type="button" id="reset">Reset</button>
+  </div>
+  <dl class="readouts">
+    <div><dt>Point P</dt><dd id="point"></dd></div>
+    <div><dt>Image P′</dt><dd id="mapped-point"></dd></div>
+    <div><dt>Angles (source → image)</dt><dd id="angles"></dd></div>
+    <div><dt>Local scale |2z|</dt><dd id="scale"></dd></div>
+  </dl>
+  <p id="explanation" aria-live="polite"></p>
+  <footer>Universidad del Tolima outline adapted from <code>logo_UT.py</code>.
+    Square-map example from Vega Penagos &amp; Olivero Zapata (2015), §3.1, Theorem 10.</footer>
+</main>
+<script>
+  const byId = (id) => document.getElementById(id);
+  const source = byId("source");
+  const image = byId("image");
+  const real = byId("real");
+  const imag = byId("imag");
+  const angle = byId("angle");
+  const initial = { real: .86, imag: .78, angle: 40 };
+  const sourceLimit = 2.1;
+  const imageLimit = 8.6;
+  const square = ([x, y]) => [x * x - y * y, 2 * x * y];
+
+  // The original polygon vertices from logo_UT.py.
+  const outlines = [
+    [[.60288, .25817], [1.40288, .25817], [1.60288, .45817], [1.6, 1.4],
+      [1.28402, 1.4], [1.28332, .59995], [.71261, .59995], [.71261, 1.4],
+      [.4, 1.4], [.4, .45817]],
+    [[.80288, .65817], [1.20288, .65817], [1.20288, 1.47699], [1.60288, 1.47699],
+      [1.60288, 1.85], [.4, 1.85], [.4, 1.47699], [.80288, 1.47699]]
+  ];
+
+  function sampleLine([x, y], [endX, endY], segments) {
+    return Array.from({ length: segments + 1 }, (_, index) => {
+      const t = index / segments;
+      return [x + t * (endX - x), y + t * (endY - y)];
+    });
+  }
+
+  const contours = outlines.map((polygon) => polygon.flatMap((point, index) =>
+    sampleLine(point, polygon[(index + 1) % polygon.length], 16).slice(0, -1)));
+  const grid = [];
+  for (let tick = -2; tick <= 2; tick += .5) {
+    grid.push(sampleLine([-2, tick], [2, tick], 40), sampleLine([tick, -2], [tick, 2], 40));
+  }
+  const mappedGrid = grid.map((line) => line.map(square));
+  const mappedContours = contours.map((contour) => contour.map(square));
+
+  function draw(canvas, limit, lines, shapes, point, heading, opening, label, tickUnit) {
+    const size = canvas.clientWidth;
+    if (!size) return;
+    const density = window.devicePixelRatio || 1;
+    const pixels = Math.round(size * density);
+    if (canvas.width !== pixels || canvas.height !== pixels) {
+      canvas.width = canvas.height = pixels;
+    }
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(pixels / size, 0, 0, pixels / size, 0, 0);
+    ctx.clearRect(0, 0, size, size);
+    const unit = (size / 2 - 14) / limit;
+    const project = ([x, y]) => [size / 2 + unit * x, size / 2 - unit * y];
+
+    function path(points, color, width, fill) {
+      ctx.beginPath();
+      ctx.moveTo(...project(points[0]));
+      for (const point of points.slice(1)) ctx.lineTo(...project(point));
+      if (fill) {
+        ctx.closePath();
+        ctx.fillStyle = fill;
+        ctx.fill();
+      }
+      ctx.lineWidth = width;
+      ctx.strokeStyle = color;
+      ctx.stroke();
+    }
+
+    for (const line of lines) path(line, "#d7e3e0", 1);
+    path([[-limit, 0], [limit, 0]], "#7b9394", 1);
+    path([[0, -limit], [0, limit]], "#7b9394", 1);
+    ctx.fillStyle = "#48646a";
+    ctx.font = "11px system-ui";
+    for (let mark = -2; mark <= 2; mark++) {
+      if (!mark) continue;
+      const tick = mark * tickUnit;
+      const [x, y] = project([tick, tick]);
+      ctx.fillText(String(tick), x - 4, size / 2 + 15);
+      ctx.fillText(String(tick), size / 2 + 5, y + 3);
+    }
+    ctx.fillText("Re", size - 22, size / 2 - 8);
+    ctx.fillText("Im", size / 2 + 6, 12);
+    path(shapes[0], "#9d4c40", 1.6, "#da9b8e55");
+    path(shapes[1], "#256d60", 1.6, "#69b6a15c");
+
+    const [x, y] = point;
+    const rayLength = Math.min(Math.min(52, size * .16) / unit, limit - Math.max(Math.abs(x), Math.abs(y)));
+    const at = (direction, length) => [x + length * Math.cos(direction), y + length * Math.sin(direction)];
+    path([point, at(heading, rayLength)], "#9d3826", 2.5);
+    path([point, at(heading + opening, rayLength)], "#087267", 2.5);
+    const arc = Array.from({ length: 26 }, (_, i) => at(heading + opening * i / 25, rayLength * .45));
+    path(arc, "#192c35", 1.4);
+    const [px, py] = project(point);
+    ctx.beginPath();
+    ctx.arc(px, py, 4.5, 0, 2 * Math.PI);
+    ctx.fillStyle = "#142e38";
+    ctx.fill();
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.font = "bold 14px system-ui";
+    ctx.fillText(label, px - 19, py + 17);
+  }
+
+  function complex([x, y]) {
+    const format = (value) => (Math.abs(value) < .005 ? 0 : value).toFixed(2);
+    return `${format(x)} ${y < -.005 ? "−" : "+"} ${format(Math.abs(y))}i`;
+  }
+
+  function render() {
+    const point = [Number(real.value), Number(imag.value)];
+    const mapped = square(point);
+    const degrees = Number(angle.value);
+    const inputAngle = degrees * Math.PI / 180;
+    const scale = 2 * Math.hypot(...point);
+    const critical = scale === 0;
+    const heading = critical ? 0 : Math.atan2(point[1], point[0]);
+    draw(source, sourceLimit, grid, contours, point, 0, inputAngle, "P", .75);
+    draw(image, imageLimit, mappedGrid, mappedContours, mapped, heading,
+      critical ? 2 * inputAngle : inputAngle, "P′", 3);
+    byId("point").textContent = complex(point);
+    byId("mapped-point").textContent = complex(mapped);
+    byId("angles").textContent = `${degrees}° → ${critical ? 2 * degrees : degrees}°`;
+    byId("scale").textContent = scale.toFixed(3);
+    const explanation = critical
+      ? "At the origin, the derivative vanishes. A ray at direction θ maps to a ray at 2θ, so the opening doubles."
+      : "Here the derivative 2z rotates and scales both tangent directions by the same amount, preserving their angle. Ray lengths are illustrative.";
+    if (byId("explanation").textContent !== explanation) byId("explanation").textContent = explanation;
+  }
+
+  function movePoint(event) {
+    const bounds = source.getBoundingClientRect();
+    const half = bounds.width / 2;
+    const unit = (half - 14) / sourceLimit;
+    const clamp = (coordinate) => Math.max(-1.8, Math.min(1.8, coordinate)).toFixed(2);
+    real.value = clamp((event.clientX - bounds.left - half) / unit);
+    imag.value = clamp((bounds.top + half - event.clientY) / unit);
+    render();
+  }
+
+  source.addEventListener("pointerdown", (event) => {
+    if (!event.isPrimary || event.button !== 0) return;
+    source.setPointerCapture(event.pointerId);
+    movePoint(event);
+  });
+  source.addEventListener("pointermove", (event) => {
+    if (source.hasPointerCapture(event.pointerId)) movePoint(event);
+  });
+  for (const input of [real, imag, angle]) input.addEventListener("input", render);
+  byId("origin").addEventListener("click", () => {
+    real.value = imag.value = 0;
+    render();
+  });
+  byId("reset").addEventListener("click", () => {
+    real.value = initial.real;
+    imag.value = initial.imag;
+    angle.value = initial.angle;
+    render();
+  });
+  const resize = new ResizeObserver(render);
+  resize.observe(source);
+  resize.observe(image);
+  render();
+</script>
+</body>
+</html>

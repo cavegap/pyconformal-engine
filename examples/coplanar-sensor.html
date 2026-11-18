@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Coplanar capacitive sensor | PyConformal Engine</title>
+  <style>
+    :root { font: 16px/1.5 Inter, system-ui, sans-serif; color: #142e38; background: #f3f7f6; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1040px; margin: auto; padding: clamp(18px, 5vw, 48px); }
+    a { color: #14645b; }
+    h1 { font: 500 clamp(2rem, 6vw, 3.65rem)/1.05 "Instrument Serif", Georgia, serif; margin: .45em 0 .25em; }
+    header p { max-width: 68ch; }
+    nav, footer, small { font-size: .86rem; }
+    .controls, dl { display: flex; flex-wrap: wrap; gap: 12px 18px; margin-block: 20px; }
+    label { display: grid; gap: 5px; align-content: start; flex: 1 1 145px; font-weight: 600; font-size: .9rem; }
+    input { min-width: 0; font: inherit; color: inherit; background: white; border: 1px solid #83a69c; border-radius: 6px; padding: 8px 11px; }
+    :is(input, a):focus-visible { outline: 3px solid #14645b; outline-offset: 3px; }
+    dl { border-block: 1px solid #c5d8d1; padding-block: 12px; }
+    dl div { flex: 1 1 145px; }
+    dt { color: #3e625c; font-size: .88rem; }
+    dd { margin: 3px 0 0; font: 600 1.3rem "IBM Plex Mono", ui-monospace, monospace; }
+    figure { margin: 12px 0; padding: 12px; border: 1px solid #cadbd6; border-radius: 12px; background: white; }
+    figcaption { font-weight: 700; }
+    canvas { display: block; width: 100%; aspect-ratio: 2.5; }
+    .diagram-key { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; margin-block: 8px 4px; font-size: .86rem; }
+    .diagram-key :is(span, label) { display: inline-flex; align-items: center; gap: 6px; flex: none; }
+    .swatch { width: 20px; height: 5px; border-radius: 2px; }
+    .drive { background: #9e3516; }
+    .sense { background: #234c9c; }
+    .field { background: #006258; }
+    #dimensions { display: block; color: #254653; font-weight: 650; }
+    #status { color: #9c3826; }
+    #status:empty { display: none; }
+    @media (max-width: 560px) { canvas { aspect-ratio: 1.6; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <nav aria-label="Examples"><a href="index.html">PyConformal Engine</a> · <a href="coplanar-waveguide.html">Coplanar waveguide</a></nav>
+    <h1>Coplanar capacitive sensor</h1>
+    <p>Change the gap and see how two finite-width electrodes couple through a uniform dielectric.</p>
+  </header>
+  <details open><summary>Where this helps · capacitive coupling and sensing</summary>
+    <p>Use this model to compare the coupling between two coplanar electrodes, study a spacing change, or estimate the response to a uniform change in dielectric permittivity. At fixed geometry, doubling εᵣ doubles C. The <strong>double-gap comparison</strong> shows the effect of moving the strips apart.</p>
+    <p><strong>Model:</strong> k = g/(g + 2w), k′ = √(1 − k²); C′ = ε₀εᵣ K(k′)/K(k), C ≈ LC′. K(k) = ∫ (1 − k² sin²θ)⁻¹ᐟ² dθ, with θ from 0 to π/2, uses the modulus k; L is the electrode length in meters.</p>
+    <p>The SC derivative is proportional to [(ζ − 1)(ζ + 1)(ζ − k)(ζ + k)]⁻¹ᐟ², with ζ = x/(g/2 + w). It maps the cross-section to a rectangle where the electrostatic problem is simpler. Field-line density is illustrative, not a measured intensity.</p>
+    <p>A material sample or nearby object usually occupies only part of the field. That sensing application needs a layered or spatial dielectric model and calibration; this uniform model does not predict that response directly. <a href="../docs/coplanar-sensor.md">Derivation and independent validation</a> · <a href="coplanar-waveguide.html">Compare the 50 Ω guide</a></p>
+  </details>
+  <div class="controls">
+    <label>Electrode width (mm) <input id="width" type="number" min=".001" max="1000" step="any" value="1"></label>
+    <label>Gap between electrodes (mm) <input id="gap" type="number" min=".001" max="1000" step="any" value=".25"></label>
+    <label>Electrode length (mm) <input id="length" type="number" min=".001" max="1000" step="any" value="20"></label>
+    <label>Relative permittivity <input id="permittivity" type="number" min="1" max="30" step="any" value="3"></label>
+  </div>
+  <dl>
+    <div><dt>Capacitance per length</dt><dd id="per-length"></dd></div>
+    <div><dt>Capacitance for this length</dt><dd id="total"></dd></div>
+    <div><dt>Capacitance if gap doubles</dt><dd id="double-gap"></dd></div>
+  </dl>
+  <p id="status" aria-live="polite"></p>
+  <figure>
+    <figcaption>Cross-section and electric field lines</figcaption>
+    <div class="diagram-key">
+      <span><i class="swatch drive" aria-hidden="true"></i> Drive · 1 V</span>
+      <span><i class="swatch sense" aria-hidden="true"></i> Sense · 0 V</span>
+      <span><i class="swatch field" aria-hidden="true"></i> Electric field direction</span>
+      <label><input id="show-field" type="checkbox" checked> Show field lines</label>
+    </div>
+    <canvas id="section" role="img" aria-label="Electric field lines curve from the right electrode at 1 volt to the left at 0 volts, above and below the two strips."></canvas>
+    <small id="dimensions"></small>
+  </figure>
+  <footer>Zero-thickness strips in a uniform dielectric. The length
+    estimate uses the two-dimensional solution and omits longitudinal end
+    effects. <a href="../docs/coplanar-sensor.md">Model and numerical verification</a>.</footer>
+</main>
+<script>
+  const byId = (id) => document.getElementById(id);
+  const controls = ["width", "gap", "length", "permittivity"].map(byId);
+  const canvas = byId("section");
+  const vacuumPermittivity = 8.8541878128e-12;
+
+  function ellipticK(complementaryModulus) {
+    // K equals π/(2 AGM(1, k′)).
+    let arithmetic = 1;
+    let geometric = complementaryModulus;
+    while (Math.abs(arithmetic - geometric) > 1e-15 * arithmetic) {
+      [arithmetic, geometric] = [(arithmetic + geometric) / 2, Math.sqrt(arithmetic * geometric)];
+    }
+    return Math.PI / (2 * arithmetic);
+  }
+
+  function capacitance(width, gap, eps) {
+    const halfSpan = gap / 2 + width;
+    const k = (gap / 2) / halfSpan;
+    const kPrime = Math.sqrt(width / halfSpan * (1 + k));
+    return { halfSpan, k, perLength: vacuumPermittivity * eps * ellipticK(k) / ellipticK(kPrime) };
+  }
+
+  function fieldDirection(x, y, k) {
+    const phase = (Math.atan2(y, x + 1) + Math.atan2(y, x + k) +
+      Math.atan2(y, x - k) + Math.atan2(y, x - 1)) / 2;
+    return [Math.cos(phase), Math.sin(phase)];
+  }
+
+  function traceField(start, k, yLimit) {
+    let x = start;
+    const step = Math.min(.013, (1 - k) / 12);
+    let y = step / 3;
+    const points = [[start, 0]];
+    for (let index = 0; index < 850; index++) {
+      points.push([x, y]);
+      const [dx, dy] = fieldDirection(x, y, k);
+      const midpointY = y + dy * step / 2;
+      if (midpointY <= 0) {
+        points.push([x - dx * y / dy, 0]);
+        break;
+      }
+      const [mx, my] = fieldDirection(x + dx * step / 2, midpointY, k);
+      const nextX = x + mx * step;
+      const nextY = y + my * step;
+      if (nextY <= 0) {
+        points.push([x + (nextX - x) * y / (y - nextY), 0]);
+        break;
+      }
+      if (Math.abs(nextX) > 1.66 || nextY > yLimit) break;
+      x = nextX;
+      y = nextY;
+    }
+    return points;
+  }
+
+  function draw(model) {
+    const width = canvas.clientWidth, height = canvas.clientHeight;
+    if (!width || !height) return;
+    const density = window.devicePixelRatio || 1;
+    const pixelWidth = Math.round(width * density), pixelHeight = Math.round(height * density);
+    if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+      canvas.width = pixelWidth;
+      canvas.height = pixelHeight;
+    }
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(pixelWidth / width, 0, 0, pixelHeight / height, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+    if (!model) return;
+    const { k } = model;
+    const unit = (width / 2 - 16) / 1.46;
+    const yLimit = (height / 2 - 11) / unit;
+    const project = ([x, y]) => [width / 2 + x * unit, height / 2 - y * unit];
+    ctx.fillStyle = "#f1f6fa";
+    ctx.fillRect(0, 0, width, height);
+    ctx.lineJoin = "round";
+
+    function line(points, color, weight = 1.25) {
+      ctx.beginPath();
+      ctx.moveTo(...project(points[0]));
+      for (const point of points.slice(1)) ctx.lineTo(...project(point));
+      ctx.strokeStyle = color;
+      ctx.lineWidth = weight;
+      ctx.stroke();
+    }
+
+    function label(text, px, py, color = "#17374a") {
+      ctx.font = "700 12px system-ui";
+      ctx.textAlign = "center";
+      const box = ctx.measureText(text).width + 10;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(px - box / 2, py - 12, box, 17);
+      ctx.fillStyle = color;
+      ctx.fillText(text, px, py);
+    }
+
+    function dimension(left, right, name) {
+      const [a, center] = project([left, 0]);
+      const [b] = project([right, 0]);
+      if (b - a < 17) return;
+      const y = center + 29;
+      ctx.beginPath();
+      ctx.moveTo(a, y - 4); ctx.lineTo(a, y + 4);
+      ctx.moveTo(a, y); ctx.lineTo(b, y);
+      ctx.moveTo(b, y - 4); ctx.lineTo(b, y + 4);
+      ctx.lineWidth = 1.3;
+      ctx.strokeStyle = "#31566f";
+      ctx.stroke();
+      label(name, (a + b) / 2, y + 15);
+    }
+
+    if (byId("show-field").checked) {
+      for (const position of [.045, .115, .20, .31, .43]) {
+        const path = traceField(k + position * (1 - k), k, yLimit);
+        for (const sign of [-1, 1]) {
+          const points = path.map(([x, y]) => [x, sign * y]);
+          line(points, "#006258", 2.05);
+          const index = Math.floor(points.length * .56);
+          if (index < 2) continue;
+          const [x, y] = points[index], [px, py] = points[index - 1];
+          const angle = Math.atan2(y - py, x - px);
+          const size = 9 / unit;
+          const wing = (theta) => [x - size * Math.cos(theta), y - size * Math.sin(theta)];
+          const arrow = [wing(angle + .49), [x, y], wing(angle - .49)];
+          line(arrow, "#f1f6fa", 4.4);
+          line(arrow, "#004940", 2.4);
+        }
+      }
+    }
+    line([[-1, 0], [-k, 0]], "#234c9c", 8);
+    line([[k, 0], [1, 0]], "#9e3516", 8);
+    const [senseX, center] = project([-(1 + k) / 2, 0]);
+    const [driveX] = project([(1 + k) / 2, 0]);
+    label("0 V", senseX, center - 12, "#234c9c");
+    label("1 V", driveX, center - 12, "#9e3516");
+    dimension(-1, -k, "w");
+    dimension(-k, k, "g");
+    dimension(k, 1, "w");
+  }
+
+  function render() {
+    const [width, gap, length, eps] = controls.map((input) => Number(input.value));
+    const valid = [width, gap, length].every((x) => x >= .001 && x <= 1000) && eps >= 1 && eps <= 30;
+    const model = valid ? capacitance(width, gap, eps) : null;
+    byId("per-length").textContent = model ? `${(model.perLength * 1e12).toFixed(2)} pF/m` : "—";
+    byId("total").textContent = model ? `${(model.perLength * length * 1e9).toFixed(3)} pF` : "—";
+    byId("double-gap").textContent = model
+      ? `${(capacitance(width, 2 * gap, eps).perLength * length * 1e9).toFixed(3)} pF` : "—";
+    byId("dimensions").textContent = model
+      ? `Electrode w = ${width.toPrecision(4)} mm · Gap g = ${gap.toPrecision(4)} mm` : "";
+    const status = valid ? "" : "Enter dimensions from 0.001 to 1000 mm and a relative permittivity from 1 to 30.";
+    if (byId("status").textContent !== status) byId("status").textContent = status;
+    draw(model);
+  }
+
+  for (const input of controls) input.addEventListener("input", render);
+  byId("show-field").addEventListener("change", render);
+  const resize = new ResizeObserver(render);
+  resize.observe(canvas);
+  render();
+</script>
+</body>
+</html>

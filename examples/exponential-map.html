@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The exponential map | PyConformal Engine</title>
+  <style>
+    :root { font: 16px/1.5 "Inter", system-ui, sans-serif; color: #142e38; background: #f3f7f6; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1080px; margin: auto; padding: clamp(18px, 5vw, 48px); }
+    nav, footer { font-size: .86rem; }
+    a { color: #14645b; }
+    h1 { font: 500 clamp(2rem, 6vw, 3.6rem)/1.05 "Instrument Serif", Georgia, serif; margin: .45em 0 .25em; }
+    header p { margin: 0 0 16px; }
+    .planes { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    figure { margin: 0; padding: 12px; background: white; border: 1px solid #cadbd6; border-radius: 12px; }
+    figcaption { padding: 0 4px 8px; font-weight: 700; }
+    canvas { width: 100%; aspect-ratio: 1; display: block; }
+    #source { touch-action: none; cursor: crosshair; }
+    .controls, dl { display: flex; flex-wrap: wrap; gap: 12px 20px; margin: 16px 0; align-items: center; }
+    label { display: grid; gap: 4px; flex: 1 1 150px; font-weight: 600; font-size: .9rem; }
+    input { min-width: 0; accent-color: #14645b; }
+    button { border: 1px solid #80a69d; border-radius: 6px; padding: 7px 11px; background: white; color: inherit; font: inherit; }
+    :is(button, input, a):focus-visible { outline: 3px solid #14645b; outline-offset: 3px; }
+    dl { padding-block: 10px; border-block: 1px solid #cadbd6; }
+    dl div { flex: 1 1 130px; }
+    dt, footer { color: #44635e; }
+    dd { margin: 0; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+    .ray { color: #915031; }
+    .circle { color: #14645b; }
+    @media (max-width: 620px) { .planes { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <nav aria-label="Examples"><a href="index.html">PyConformal Engine</a> · <a href="square-map.html">The square map</a> ·
+      <a href="disk-to-halfplane.html">Disk to half-plane</a></nav>
+    <h1>The exponential map <i>w</i> = <i>e</i><sup><i>z</i></sup></h1>
+    <p>Drag P or use the sliders. A <strong class="ray">horizontal line</strong> maps to a segment of a ray.
+      A <strong class="circle">vertical line</strong> maps to a circle over one full turn.</p>
+  </header>
+  <details><summary>Formula and object example</summary><p>w = exp(x + iy) = eˣ(cos y + i sin y); f′(z) = exp z never vanishes. Local angles are preserved, but points separated by 2πi have the same image. Horizontal lines become rays and vertical lines become circles. <a href="object-reveal.html">See a logarithm recover a recognizable house from an exponential deformation.</a></p></details>
+  <div class="planes">
+    <figure>
+      <figcaption>Source · rectangular grid</figcaption>
+      <canvas id="source" role="img" aria-label="Complex plane with a horizontal and vertical line through P"></canvas>
+    </figure>
+    <figure>
+      <figcaption>Image · circular grid</figcaption>
+      <canvas id="image" role="img" aria-label="Complex plane with the mapped ray segment and circle through P prime"></canvas>
+    </figure>
+  </div>
+  <div class="controls">
+    <label>Real part of P <input id="real" type="range" min="-1.5" max="1.5" step=".01" value=".70"></label>
+    <label>Imaginary part of P (degrees) <input id="angle" type="range" min="-180" max="180" step="1" value="55"></label>
+    <button id="wrap" type="button">Compare −180° and +180°</button>
+    <button id="reset" type="button">Reset</button>
+  </div>
+  <dl>
+    <div><dt>Point P</dt><dd id="point"></dd></div>
+    <div><dt>Image P′</dt><dd id="mapped"></dd></div>
+    <div><dt>Image radius</dt><dd id="radius"></dd></div>
+    <div><dt>Image direction</dt><dd id="direction"></dd></div>
+  </dl>
+  <p id="period" aria-live="polite">The top and bottom edges differ by 2πi and have the same image.</p>
+  <footer>Vega Penagos &amp; Olivero Zapata (2015), §3.3. Original Maple worksheet <code>exponencial.mw</code>.</footer>
+</main>
+<script>
+  const byId = (id) => document.getElementById(id);
+  const source = byId("source");
+  const image = byId("image");
+  const real = byId("real");
+  const angle = byId("angle");
+  const sourceLimit = 3.55;
+  const imageLimit = 5.1;
+  const xLimit = 1.5;
+  const ray = "#915031";
+  const circle = "#14645b";
+  const radians = (degrees) => degrees * Math.PI / 180;
+  const exponential = ([x, y]) => [Math.exp(x) * Math.cos(y), Math.exp(x) * Math.sin(y)];
+  const samples = (fn) => Array.from({ length: 121 }, (_, i) => fn(i / 120));
+  const horizontal = (y) => samples((t) => [(2 * t - 1) * xLimit, y]);
+  const vertical = (x) => samples((t) => [x, (2 * t - 1) * Math.PI]);
+  const grid = [
+    ...[-180, -135, -90, -45, 0, 45, 90, 135, 180].map((deg) => horizontal(radians(deg))),
+    ...[-1.5, -1, -.5, 0, .5, 1, 1.5].map(vertical),
+  ];
+  const mappedGrid = grid.map((line) => line.map(exponential));
+
+  function draw(canvas, limit, lines, selected, point, label, ticks) {
+    const size = canvas.clientWidth;
+    if (!size) return;
+    const pixels = Math.round(size * (window.devicePixelRatio || 1));
+    if (canvas.width !== pixels || canvas.height !== pixels) canvas.width = canvas.height = pixels;
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(pixels / size, 0, 0, pixels / size, 0, 0);
+    ctx.clearRect(0, 0, size, size);
+    const project = ([x, y]) => [size * (1 + x / limit) / 2, size * (1 - y / limit) / 2];
+
+    function line(points, color, width) {
+      ctx.beginPath();
+      ctx.moveTo(...project(points[0]));
+      for (const vertex of points.slice(1)) ctx.lineTo(...project(vertex));
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.stroke();
+    }
+
+    for (const points of lines) line(points, "#d0e0dc", 1);
+    line([[-limit, 0], [limit, 0]], "#849c9b", 1);
+    line([[0, -limit], [0, limit]], "#849c9b", 1);
+    ctx.font = "12px system-ui";
+    ctx.fillStyle = "#48646a";
+    for (const tick of ticks) {
+      const [x, y] = project([tick, tick]);
+      ctx.fillText(String(tick), x - 5, size / 2 + 16);
+      ctx.fillText(String(tick), size / 2 + 6, y + 4);
+    }
+    ctx.fillText("Re", size - 23, size / 2 - 7);
+    ctx.fillText("Im", size / 2 + 6, 13);
+    line(selected[0], ray, 2);
+    line(selected[1], circle, 2);
+    const [px, py] = project(point);
+    ctx.beginPath();
+    ctx.arc(px, py, 4.7, 0, 2 * Math.PI);
+    ctx.fillStyle = "#142e38";
+    ctx.fill();
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
+    ctx.font = "bold 14px system-ui";
+    ctx.fillText(label, px + (px > size - 24 ? -19 : 8), py < 22 ? py + 17 : py - 8);
+  }
+
+  function format([x, y]) {
+    const fixed = (part) => (Math.abs(part) < .0005 ? 0 : part).toFixed(3);
+    return `${fixed(x)} ${y < -.0005 ? "−" : "+"} ${fixed(Math.abs(y))}i`;
+  }
+
+  function render() {
+    const x = Number(real.value);
+    const degrees = Number(angle.value);
+    const y = radians(degrees);
+    const point = [x, y];
+    const mapped = exponential(point);
+    const selected = [horizontal(y), vertical(x)];
+    draw(source, sourceLimit, grid, selected, point, "P", [-3, -2, -1, 1, 2, 3]);
+    draw(image, imageLimit, mappedGrid, selected.map((line) => line.map(exponential)),
+      mapped, "P′", [-4, -2, 2, 4]);
+    byId("point").textContent = format(point);
+    byId("mapped").textContent = format(mapped);
+    byId("radius").textContent = Math.exp(x).toFixed(3);
+    byId("direction").textContent = Math.abs(degrees) === 180 ? "180° · negative real axis" : `${degrees}°`;
+  }
+
+  function movePoint(event) {
+    const rect = source.getBoundingClientRect();
+    const x = sourceLimit * (2 * (event.clientX - rect.left) / rect.width - 1);
+    const y = sourceLimit * (1 - 2 * (event.clientY - rect.top) / rect.height);
+    real.value = Math.max(-xLimit, Math.min(xLimit, x)).toFixed(2);
+    angle.value = Math.round(Math.max(-180, Math.min(180, 180 * y / Math.PI)));
+    render();
+  }
+
+  source.addEventListener("pointerdown", (event) => {
+    if (!event.isPrimary || event.button !== 0) return;
+    source.setPointerCapture(event.pointerId);
+    movePoint(event);
+  });
+  source.addEventListener("pointermove", (event) => {
+    if (source.hasPointerCapture(event.pointerId)) movePoint(event);
+  });
+  for (const input of [real, angle]) input.addEventListener("input", render);
+  byId("wrap").addEventListener("click", () => { angle.value = Number(angle.value) === -180 ? 180 : -180; render(); });
+  byId("reset").addEventListener("click", () => { real.value = .70; angle.value = 55; render(); });
+  const resize = new ResizeObserver(render);
+  resize.observe(source);
+  resize.observe(image);
+  render();
+</script>
+</body>
+</html>

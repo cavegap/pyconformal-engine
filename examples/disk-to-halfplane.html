@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Disk to half-plane | PyConformal Engine</title>
+  <style>
+    :root { font: 16px/1.5 "Inter", system-ui, sans-serif; color: #142e38; background: #f3f7f6; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1080px; margin: auto; padding: clamp(18px, 5vw, 48px); }
+    nav, footer { font-size: .86rem; }
+    a { color: #14645b; }
+    h1 { font: 500 clamp(2rem, 6vw, 3.6rem)/1.05 "Instrument Serif", Georgia, serif; margin: .45em 0 .25em; }
+    .formula { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+    header p { margin: 0 0 16px; }
+    .planes { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    figure { margin: 0; padding: 12px; background: white; border: 1px solid #cadbd6; border-radius: 12px; }
+    figcaption { padding: 0 4px 8px; font-weight: 700; }
+    canvas { width: 100%; aspect-ratio: 1; display: block; }
+    #disk { touch-action: none; cursor: crosshair; }
+    .controls, dl { display: flex; flex-wrap: wrap; gap: 12px 20px; margin: 16px 0; align-items: center; }
+    label { display: grid; gap: 4px; flex: 1 1 150px; font-weight: 600; font-size: .9rem; }
+    input { min-width: 0; accent-color: #14645b; }
+    button { border: 1px solid #80a69d; border-radius: 6px; padding: 7px 11px; background: white; color: inherit; font: inherit; }
+    :is(button, input, a):focus-visible { outline: 3px solid #14645b; outline-offset: 3px; }
+    dl { padding-block: 10px; border-block: 1px solid #cadbd6; }
+    dl div { flex: 1 1 130px; }
+    dt, footer { color: #44635e; }
+    dd { margin: 0; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+    #location { margin-block: 9px 16px; }
+    @media (max-width: 620px) { .planes { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <nav aria-label="Examples"><a href="index.html">PyConformal Engine</a> · <a href="square-map.html">The square map</a></nav>
+    <h1>From disk to half-plane</h1>
+    <p class="formula"><i>w</i> = <i>i</i>(1 − <i>z</i>)/(1 + <i>z</i>)</p>
+    <p>Drag P or use the sliders. Move to the unit circle to follow its image along the real axis.</p>
+  </header>
+  <details><summary>Formula and reference points</summary><p>w = i(1 − z)/(1 + z), with Im w = (1 − |z|²)/|1 + z|². Thus the open unit disk maps into the upper half-plane. Reference points: 0 → i, i → 1, −i → −1, 1 → 0; −1 is the pole. Compare an interior point, a boundary point and the pole with the controls below.</p></details>
+  <div class="planes">
+    <figure>
+      <figcaption>Source · unit disk</figcaption>
+      <canvas id="disk" role="img" aria-label="Disk with polar grid, point P, and pole at minus one"></canvas>
+    </figure>
+    <figure>
+      <figcaption>Image · upper half-plane</figcaption>
+      <canvas id="half-plane" role="img" aria-label="Upper half-plane with mapped grid and image point P prime when visible"></canvas>
+    </figure>
+  </div>
+  <div class="controls">
+    <label for="radius">Radius <input id="radius" type="range" min="0" max="1" step=".001" value=".5"></label>
+    <label for="angle">Direction (degrees) <input id="angle" type="range" min="0" max="360" step=".1" value="65"></label>
+    <button id="boundary" type="button">Move to boundary</button>
+    <button id="pole" type="button">Move to pole</button>
+    <button id="reset" type="button">Reset</button>
+  </div>
+  <dl>
+    <div><dt>Radius · direction</dt><dd id="polar"></dd></div>
+    <div><dt>Point P</dt><dd id="point"></dd></div>
+    <div><dt>Image P′</dt><dd id="mapped"></dd></div>
+  </dl>
+  <p id="location" aria-live="polite"></p>
+  <footer>Vega Penagos &amp; Olivero Zapata (2015), §3.2, Example 1, Fig. 3.6.
+    Original Maple worksheet <code>disco.mw</code>.</footer>
+</main>
+<script>
+  const byId = (id) => document.getElementById(id);
+  const disk = byId("disk");
+  const halfPlane = byId("half-plane");
+  const radius = byId("radius");
+  const angle = byId("angle");
+  const teal = "#166f65";
+  const rust = "#a34c37";
+  const domain = { x: -1.2, y: -1.2, width: 2.4 };
+  const range = { x: -4, y: -.85, width: 8 };
+
+  function polar(r, degrees) {
+    const theta = degrees * Math.PI / 180;
+    return [r * Math.cos(theta), r * Math.sin(theta)];
+  }
+
+  function cayley(r, degrees) {
+    if (degrees === 180) {
+      return r === 1 ? null : [0, (1 + r) / (1 - r)];
+    }
+    // Use distance from the pole to retain precision at angles near 180°.
+    const offset = (degrees - 180) * Math.PI / 180;
+    const denominator = (1 - r) ** 2 + 4 * r * Math.sin(offset / 2) ** 2;
+    return [-2 * r * Math.sin(offset) / denominator, (1 - r) * (1 + r) / denominator];
+  }
+
+  const samples = (count, callback) => Array.from({ length: count + 1 }, (_, i) => callback(i / count));
+  const circles = [.25, .5, .75, 1].map((r) => ({
+    source: samples(360, (t) => polar(r, 360 * t)),
+    image: samples(360, (t) => cayley(r, 360 * t)),
+    color: r === 1 ? teal : "#afd1cb",
+  }));
+  const spokes = Array.from({ length: 12 }, (_, i) => ({
+    source: samples(64, (r) => polar(r, 30 * i)),
+    image: samples(64, (r) => cayley(r, 30 * i)),
+    color: "#d9b9af",
+  }));
+
+  function panel(canvas, limits) {
+    const size = canvas.clientWidth;
+    const density = window.devicePixelRatio || 1;
+    const pixels = Math.round(size * density);
+    if (canvas.width !== pixels || canvas.height !== pixels) canvas.width = canvas.height = pixels;
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(pixels / size, 0, 0, pixels / size, 0, 0);
+    ctx.clearRect(0, 0, size, size);
+    const unit = size / limits.width;
+    const project = ([x, y]) => [(x - limits.x) * unit, size - (y - limits.y) * unit];
+
+    function line(points, color, width = 1.1) {
+      ctx.beginPath();
+      let started = false;
+      for (const point of points) {
+        if (point === null) { started = false; continue; }
+        if (started) ctx.lineTo(...project(point));
+        else ctx.moveTo(...project(point));
+        started = true;
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.stroke();
+    }
+
+    function text(label, point, dx, dy, color = "#4b666b") {
+      const [x, y] = project(point);
+      ctx.font = "600 12px system-ui";
+      ctx.fillStyle = color;
+      ctx.fillText(label, x + dx, y + dy);
+    }
+
+    function marker(point, label, color, dx = 9, dy = -8) {
+      ctx.beginPath();
+      ctx.arc(...project(point), 4.7, 0, 2 * Math.PI);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+      text(label, point, dx, dy, color);
+    }
+
+    return { ctx, project, unit, line, text, marker };
+  }
+
+  function complex([x, y]) {
+    const real = Math.abs(x) < .0005 ? 0 : x;
+    return `${real.toFixed(3)} ${y < -.0005 ? "−" : "+"} ${Math.abs(y).toFixed(3)}i`;
+  }
+
+  function render() {
+    if (!disk.clientWidth || !halfPlane.clientWidth) return;
+    const r = Number(radius.value);
+    const degrees = Number(angle.value);
+    const point = polar(r, degrees);
+    const mapped = cayley(r, degrees);
+    const source = panel(disk, domain);
+    const image = panel(halfPlane, range);
+    source.ctx.beginPath();
+    source.ctx.arc(...source.project([0, 0]), source.unit, 0, 2 * Math.PI);
+    source.ctx.fillStyle = "#edf6f3";
+    source.ctx.fill();
+    image.ctx.fillStyle = "#edf6f3";
+    const [left, bottom] = image.project([range.x, 0]);
+    image.ctx.fillRect(left, 0, halfPlane.clientWidth, bottom);
+    for (const gridLine of [...spokes, ...circles]) {
+      source.line(gridLine.source, gridLine.color);
+      image.line(gridLine.image, gridLine.color);
+    }
+    source.line([[-1.13, 0], [1.13, 0]], "#81999a");
+    source.line([[0, -1.13], [0, 1.13]], "#81999a");
+    image.line([[-4, 0], [4, 0]], teal, 1.5);
+    image.line([[0, -.4], [0, 6.95]], "#81999a");
+    source.text("1", [1, 0], -7, 17);
+    source.text("i", [0, 1], 7, 0);
+    source.text("−i", [0, -1], 7, 3);
+    source.marker([-1, 0], "−1 · pole", rust, -9, 17);
+    for (const x of [-3, -2, -1, 1, 2, 3]) image.text(String(x), [x, 0], -5, 16);
+    for (const y of [1, 2, 3, 4, 5, 6]) image.text(String(y), [0, y], 6, 4);
+    image.text("Re w", [4, 0], -34, 16);
+    image.text("Im w", [0, 7], 6, 5);
+    source.marker(point, "P", "#142e38", r > .9 && point[0] > .85 ? -17 : 9);
+    const visible = mapped !== null && Math.abs(mapped[0]) <= 4 && mapped[1] <= range.y + range.width;
+    if (visible) image.marker(mapped, "P′", "#142e38", mapped[0] > 3.4 ? -19 : 9,
+      mapped[1] > 6.7 ? 17 : -8);
+    byId("polar").textContent = `${r.toFixed(3)} · ${degrees.toFixed(1)}°`;
+    byId("point").textContent = complex(point);
+    byId("mapped").textContent = mapped === null ? "∞" : complex(mapped);
+    const location = mapped === null ? "At −1 the denominator vanishes. P′ is the point at infinity."
+      : (r === 1 ? "P lies on the unit circle. P′ lies on the real axis."
+        : "P lies inside the disk. P′ lies in the upper half-plane.") +
+        (visible ? "" : " P′ is beyond the plotted window.");
+    if (byId("location").textContent !== location) byId("location").textContent = location;
+  }
+
+  function movePoint(event) {
+    const bounds = disk.getBoundingClientRect();
+    const x = domain.x + (event.clientX - bounds.left) * domain.width / bounds.width;
+    const y = domain.y + (bounds.bottom - event.clientY) * domain.width / bounds.width;
+    radius.value = Math.min(1, Math.hypot(x, y)).toFixed(3);
+    angle.value = ((Math.atan2(y, x) * 180 / Math.PI + 360) % 360).toFixed(1);
+    render();
+  }
+
+  disk.addEventListener("pointerdown", (event) => {
+    if (!event.isPrimary || event.button !== 0) return;
+    disk.setPointerCapture(event.pointerId);
+    movePoint(event);
+  });
+  disk.addEventListener("pointermove", (event) => {
+    if (disk.hasPointerCapture(event.pointerId)) movePoint(event);
+  });
+  for (const input of [radius, angle]) input.addEventListener("input", render);
+  byId("boundary").addEventListener("click", () => { radius.value = 1; render(); });
+  byId("pole").addEventListener("click", () => { radius.value = 1; angle.value = 180; render(); });
+  byId("reset").addEventListener("click", () => { radius.value = .5; angle.value = 65; render(); });
+  const resize = new ResizeObserver(render);
+  resize.observe(disk);
+  resize.observe(halfPlane);
+  render();
+</script>
+</body>
+</html>

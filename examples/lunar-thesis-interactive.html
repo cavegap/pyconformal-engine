@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lunar outlines from the thesis | PyConformal Engine</title>
+  <style>
+    :root { font: 16px/1.5 Inter, system-ui, sans-serif; color: #17374a; background: #f3f7f6; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1500px; margin: auto; padding: clamp(18px, 4vw, 48px); }
+    a { color: #14645b; }
+    h1 { font: 500 clamp(2rem, 6vw, 3.65rem)/1.05 "Instrument Serif", Georgia, serif; margin: .45em 0 .25em; }
+    p { margin: .65em 0; }
+    nav, footer, small { font-size: .86rem; }
+    .controls, dl { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin-block: 15px; }
+    button { font: inherit; color: inherit; background: white; border: 1px solid #83a69c; border-radius: 7px; padding: 6px 11px; }
+    button[aria-pressed="true"] { background: #d6ebe5; border-color: #186b61; font-weight: 700; }
+    :is(button, input, a):focus-visible { outline: 3px solid #14645b; outline-offset: 3px; }
+    label { font-size: .93rem; }
+    input { accent-color: #14645b; }
+    .slider { display: grid; gap: 4px; flex: 1 1 240px; }
+    .planes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    figure { margin: 0; padding: 11px; background: white; border: 1px solid #cadbd6; border-radius: 12px; }
+    figcaption { font-weight: 700; padding-inline: 4px; }
+    canvas { display: block; width: 100%; aspect-ratio: 1.18; cursor: crosshair; }
+    dl { border-block: 1px solid #c5d8d1; padding-block: 10px; align-items: start; }
+    dl div { flex: 1 1 160px; }
+    dt, footer { color: #406362; }
+    dd { margin: 0; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+    #status { min-height: 1.5em; }
+    [hidden] { display: none !important; }
+    @media (max-width: 900px) { .planes { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <nav aria-label="Project"><a href="index.html">PyConformal Engine</a> · <a href="../docs/lunar-thesis-outlines.md">Source and verification</a></nav>
+    <h1>Follow a lunar outline</h1>
+    <p>Follow the cyan contour from the lunar sphere to the Mercator tracing and its transformed image. Click any view or move the slider.</p>
+    <p><small>The globe provides geographic context through an orthographic view. The archival registration is approximate; this is not a surveyed crater boundary.</small></p>
+  </header>
+  <div class="controls" role="group" aria-label="Transformation">
+    <strong>Transformation</strong>
+    <button type="button" data-map="square" aria-pressed="true">Square · <i>z</i>²</button>
+    <button type="button" data-map="cube" aria-pressed="false">Cube · <i>z</i>³</button>
+    <button type="button" data-map="log" aria-pressed="false">New · log(1 + <i>z</i>)</button>
+    <button type="button" data-map="peirce" aria-pressed="false">Peirce · Moon</button>
+    <label><input id="secondary" type="checkbox" checked> Show smaller outlines</label>
+    <label id="detail-control" hidden><input id="detail" type="checkbox"> Zoom to tracing</label>
+  </div>
+  <div class="planes">
+    <figure>
+      <figcaption>1 · Lunar sphere</figcaption>
+      <canvas id="sphere" role="img" aria-label="The same traced contour on an orthographic lunar globe, centered at 0 degrees longitude and 30 degrees north."></canvas>
+    </figure>
+    <figure>
+      <figcaption>2 · Mercator tracing</figcaption>
+      <canvas id="source" role="img" aria-label="Lunar outline traced for Figure 4.5, with reference vertices A through D and selected point P."></canvas>
+    </figure>
+    <figure>
+      <figcaption id="image-title">Image · square map</figcaption>
+      <canvas id="image" role="img" aria-label="Mapped lunar outline with reference vertices A through D and the image of the selected point."></canvas>
+    </figure>
+  </div>
+  <div class="controls">
+    <label class="slider">Position along the cyan outline
+      <input id="position" type="range" min="0" max="1" step="1" value="0">
+    </label>
+    <div class="controls" role="group" aria-label="Jump to a reference vertex">
+      <button type="button" data-mark="0" aria-pressed="false">A</button>
+      <button type="button" data-mark="1" aria-pressed="false">B</button>
+      <button type="button" data-mark="2" aria-pressed="false">C</button>
+      <button type="button" data-mark="3" aria-pressed="false">D</button>
+    </div>
+  </div>
+  <dl>
+    <div><dt>Source point P</dt><dd id="source-point"></dd></div>
+    <div><dt>Mapped point P′</dt><dd id="image-point"></dd></div>
+    <div id="geographic" hidden><dt>Approximate lunar coordinates</dt><dd id="lunar-point"></dd></div>
+  </dl>
+  <p id="status"></p>
+  <p id="formula"></p>
+  <footer>Figure 4.5, Vega Penagos &amp; Olivero Zapata (2015).
+    Lunar imagery credit NASA / GSFC / Arizona State University.</footer>
+</main>
+<script src="lunar-thesis-data.js"></script>
+<script>
+  const byId = (id) => document.getElementById(id);
+  const data = window.lunarOutlineData;
+  const source = byId("source");
+  const sphere = byId("sphere");
+  const image = byId("image");
+  const slider = byId("position");
+  const maps = [...document.querySelectorAll("[data-map]")];
+  const marks = [...document.querySelectorAll("[data-mark]")];
+  let mode = "square";
+  let sourceView;
+  let imageView;
+  let sphereView;
+  let globeReady = false;
+  const globe = new Image();
+  const mercator = new Image();
+  let mercatorReady = false;
+  let tileReady = false;
+  const tile = new Image();
+  const states = {
+    square: ["Image · square map", "The plotted boundary in Figure 4.5 matches the square map."],
+    cube: ["Image · cube map", "The text and caption of Figure 4.5 specify the cube map."],
+    log: ["Image · logarithmic map", "A new comparison: the logarithm compresses distant parts of the tracing while preserving local angles throughout this source rectangle."],
+    peirce: ["Image · Peirce mosaic", "The historical outlines use an approximate registration to lunar coordinates."],
+  };
+
+  const square = ([x, y]) => [x*x - y*y, 2*x*y];
+  const cube = ([x, y]) => [x*(x*x - 3*y*y), y*(3*x*x - y*y)];
+  const logarithm = ([x, y]) => [Math.log(Math.hypot(1+x, y)), Math.atan2(y, 1+x)];
+  const formulas = {
+    square: "w = z²; f′(z) = 2z. Angles are preserved locally except at the critical point z = 0.",
+    cube: "w = z³; f′(z) = 3z². Local length scale is |f′(z)|; area scale is |f′(z)|².",
+    log: "w = Log(1 + z); f′(z) = 1/(1 + z). Principal branch; Re(1 + z) > 0 on this tracing. No pole or branch cut crosses the source.",
+    peirce: "Sphere → stereographic disk ζ → p = i(1 − ζ)/(1 + ζ) → SC square; the global map folds the southern hemisphere into four triangles. See Source and verification for the normalization.",
+  };
+  const limits = {
+    source: [-.5, 12.5, -.45, 6.45],
+    square: [-44, 152, -8, 152],
+    cube: [-530, 1840, -305, 2490],
+    log: [-.12, 2.85, -.08, 1.5],
+    peirce: [-1.04, 1.04, -1.04, 1.04],
+  };
+
+  function detailExtent(paths) {
+    const points = paths.flat();
+    return [
+      Math.max(-1, Math.min(...points.map(([x]) => x)) - .065),
+      Math.min(1, Math.max(...points.map(([x]) => x)) + .065),
+      Math.max(-1, Math.min(...points.map(([, y]) => y)) - .065),
+      Math.min(1, Math.max(...points.map(([, y]) => y)) + .065),
+    ];
+  }
+
+  function renderPanel(canvas, curves, bounds, selected, reference, mosaic = false) {
+    const width = canvas.clientWidth, height = canvas.clientHeight;
+    if (!width || !height) return;
+    const density = window.devicePixelRatio || 1;
+    const pixelWidth = Math.round(width * density), pixelHeight = Math.round(height * density);
+    if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+      canvas.width = pixelWidth;
+      canvas.height = pixelHeight;
+    }
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(pixelWidth / width, 0, 0, pixelHeight / height, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+    const [left, right, bottom, top] = bounds;
+    const unit = Math.min((width - 18)/(right - left), (height - 18)/(top - bottom));
+    const midX = (left + right)/2, midY = (bottom + top)/2;
+    const project = ([x, y]) => [width/2 + (x - midX)*unit, height/2 - (y - midY)*unit];
+    const [clipX, clipY] = project([left, top]);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(clipX, clipY, (right - left)*unit, (top - bottom)*unit);
+    ctx.clip();
+
+    if (mosaic === "globe" && globeReady) {
+      const [x, y] = project([-1, 1]);
+      ctx.drawImage(globe, x, y, 2*unit, 2*unit);
+    }
+    if (mosaic === "mercator" && mercatorReady) {
+      const [x, y] = project([0, 6]);
+      ctx.drawImage(mercator, x, y, 12*unit, 6*unit);
+    }
+    if (mosaic === true && tileReady) {
+      const [x, y] = project([-1, 1]);
+      ctx.drawImage(tile, x, y, 2*unit, 2*unit);
+    }
+    if (mosaic === true) {
+      const outline = [[0, -1], [1, 0], [0, 1], [-1, 0], [0, -1]];
+      ctx.beginPath();
+      ctx.moveTo(...project(outline[0]));
+      for (const point of outline.slice(1)) ctx.lineTo(...project(point));
+      ctx.strokeStyle = tileReady ? "#e5f5f1a6" : "#7d9b9c";
+      ctx.lineWidth = .8;
+      ctx.stroke();
+    }
+    for (const [index, curve] of curves.entries()) {
+      if (index && !byId("secondary").checked) break;
+      ctx.beginPath();
+      ctx.moveTo(...project(curve[0]));
+      for (const point of curve.slice(1)) ctx.lineTo(...project(point));
+      ctx.closePath();
+      ctx.fillStyle = index ? (mosaic ? "#f5d5a320" : "#bcc7c8") : (mosaic ? "#41c8cd44" : "#336986");
+      ctx.strokeStyle = index ? (mosaic ? "#ffe2ab" : "#728c93") : (mosaic ? "#67f4ee" : "#194361");
+      ctx.lineWidth = index ? 1.2 : 2.7;
+      ctx.fill();
+      const edgeColor = index ? "#ffe1a8" : "#61fff1";
+      ctx.strokeStyle = "#173745";
+      ctx.lineWidth = index ? 3.2 : 5.3;
+      ctx.stroke();
+      ctx.strokeStyle = edgeColor;
+      ctx.lineWidth = index ? 1.2 : 2.7;
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    for (const [index, marker] of reference.entries()) {
+      const [x, y] = project(curves[0][marker]);
+      ctx.beginPath();
+      ctx.arc(x, y, 5.5, 0, 2 * Math.PI);
+      ctx.fillStyle = "#ffdb95";
+      ctx.fill();
+      ctx.strokeStyle = "#163241";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.font = "bold 12px system-ui";
+      ctx.lineWidth = 4;
+      ctx.strokeText("ABCD"[index], x - 17, y - 9);
+      ctx.fillText("ABCD"[index], x - 17, y - 9);
+    }
+    const [x, y] = project(curves[0][selected]);
+    ctx.beginPath();
+    ctx.arc(x, y, 7.5, 0, 2*Math.PI);
+    ctx.strokeStyle = "#17374a";
+    ctx.lineWidth = 3.5;
+    ctx.stroke();
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    return { project, boundary: curves[0] };
+  }
+
+  function number(value) {
+    return (Math.abs(value) < .0005 ? 0 : value).toFixed(3);
+  }
+
+  function coordinates([x, y]) {
+    return `${number(x)} ${y < -.0005 ? "−" : "+"} ${number(Math.abs(y))}i`;
+  }
+
+  function render() {
+    const selected = Number(slider.value);
+    const peirce = mode === "peirce";
+    const curves = data[mode];
+    const bounds = peirce && byId("detail").checked ? data.zoom : limits[mode];
+    sphereView = renderPanel(sphere, data.sphere, [-1.06,1.06,-1.06,1.06], selected, data.markers, "globe");
+    sourceView = renderPanel(source, data.source, limits.source, selected, data.markers, "mercator");
+    imageView = renderPanel(image, curves, bounds, selected, data.markers, peirce);
+    byId("image-title").textContent = "3 · " + states[mode][0];
+    byId("formula").textContent = formulas[mode];
+    byId("source-point").textContent = coordinates(data.source[0][selected]);
+    slider.setAttribute("aria-valuetext", byId("source-point").textContent);
+    byId("image-point").textContent = coordinates(curves[0][selected]);
+    byId("geographic").hidden = false;
+    byId("detail-control").hidden = !peirce;
+    const [lon, lat] = data.geographic[selected];
+    byId("lunar-point").textContent = `${Math.abs(lat).toFixed(2)}° ${lat < 0 ? "S" : "N"}, ${Math.abs(lon).toFixed(2)}° ${lon < 0 ? "W" : "E"}`;
+    const note = peirce && !tileReady ? " " + (tile.complete ? "The mosaic tile could not be loaded." : "Loading the mosaic tile…") : "";
+    byId("status").textContent = states[mode][1] + note;
+    for (const mark of marks) {
+      mark.setAttribute("aria-pressed", String(data.markers[Number(mark.dataset.mark)] === selected));
+    }
+  }
+
+  function selectFromCanvas(canvas, view, event) {
+    if (!view) return;
+    const rect = canvas.getBoundingClientRect();
+    const clickX = (event.clientX - rect.left) * canvas.clientWidth / rect.width;
+    const clickY = (event.clientY - rect.top) * canvas.clientHeight / rect.height;
+    const distanceFromClick = (point) => {
+      const [x, y] = view.project(point);
+      return (clickX - x)**2 + (clickY - y)**2;
+    };
+    const nearbyMarker = data.markers.find((index) => distanceFromClick(view.boundary[index]) <= 49);
+    if (nearbyMarker !== undefined) {
+      slider.value = nearbyMarker;
+      render();
+      return;
+    }
+    let closest = 0;
+    let best = Infinity;
+    for (const [index, point] of view.boundary.entries()) {
+      const distance = distanceFromClick(point);
+      if (distance < best) { closest = index; best = distance; }
+    }
+    slider.value = closest;
+    render();
+  }
+
+  if (data) {
+    data.square = data.source.map((path) => path.map(square));
+    data.cube = data.source.map((path) => path.map(cube));
+    data.log = data.source.map((path) => path.map(logarithm));
+    data.zoom = detailExtent(data.peirce);
+    slider.max = data.source[0].length - 2; // The final sample closes the path.
+    slider.value = data.markers[0];
+    for (const button of maps) {
+      button.addEventListener("click", () => {
+        mode = button.dataset.map;
+        for (const peer of maps) peer.setAttribute("aria-pressed", String(peer === button));
+        render();
+      });
+    }
+    for (const button of marks) {
+      button.addEventListener("click", () => {
+        slider.value = data.markers[Number(button.dataset.mark)];
+        render();
+      });
+    }
+    slider.addEventListener("input", render);
+    byId("detail").addEventListener("change", render);
+    byId("secondary").addEventListener("change", render);
+    source.addEventListener("click", (event) => selectFromCanvas(source, sourceView, event));
+    sphere.addEventListener("click", (event) => selectFromCanvas(sphere, sphereView, event));
+    image.addEventListener("click", (event) => selectFromCanvas(image, imageView, event));
+    tile.onload = () => { tileReady = true; render(); };
+    tile.onerror = render;
+    tile.src = "lunar-thesis-tile.jpg";
+    globe.onload = () => { globeReady = true; render(); };
+    globe.onerror = () => { byId("status").textContent = "Keep lunar-thesis-globe.jpg beside this page for the sphere background."; };
+    globe.src = "lunar-thesis-globe.jpg";
+    mercator.onload = () => { mercatorReady = true; render(); };
+    mercator.onerror = () => { byId("status").textContent = "Keep lunar-thesis-mercator.jpg beside this page for the Mercator background."; };
+    mercator.src = "lunar-thesis-mercator.jpg";
+    const resize = new ResizeObserver(render);
+    resize.observe(source);
+    resize.observe(image);
+    resize.observe(sphere);
+    render();
+  } else {
+    byId("status").textContent = "Keep lunar-thesis-data.js and lunar-thesis-tile.jpg beside this page.";
+  }
+</script>
+</body>
+</html>
