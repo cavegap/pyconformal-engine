@@ -7,6 +7,10 @@ page offers learning, applications and lunar-cartography routes.
 
 ## Build locally
 
+The hashed publication environment uses Python 3.11 or newer. For a
+Python 3.10 development installation, `.[site]` selects the compatible
+Markdown 3.10 series; the mathematical package still supports Python 3.10.
+
 ```bash
 python -m pip install --require-hashes -r requirements/site.txt
 python scripts/build_pages.py

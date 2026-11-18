@@ -37,9 +37,14 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-site = ["Markdown==3.11.3", "latex2mathml==3.81.1"]
+site = [
+    "Markdown==3.10.3; python_version < '3.11'",
+    "Markdown==3.11.3; python_version >= '3.11'",
+    "latex2mathml==3.81.1",
+]
 dev = [
-    "Markdown==3.11.3",
+    "Markdown==3.10.3; python_version < '3.11'",
+    "Markdown==3.11.3; python_version >= '3.11'",
     "latex2mathml==3.81.1",
     "types-Markdown>=3.6",
     "pytest>=8.0",
