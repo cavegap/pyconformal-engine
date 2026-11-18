@@ -1,8 +1,8 @@
 """Elementary and trigonometric conformal maps (§3.3 of the thesis).
 
-This module will expose the standard conformal building blocks:
+The exponential map is available as :func:`exponential`. Planned building
+blocks include:
 
-* :class:`Exponential` — w = e^z.
 * :class:`Logarithm` — w = log z (principal branch).
 * :class:`Power` — w = z^n.
 * :class:`Sine`, :class:`Cosine`, :class:`Tangent`.
@@ -24,4 +24,20 @@ Maple source files: ``exponencial.mw``, ``logaritmo.mw``, ``composicion.mw``,
 
 from __future__ import annotations
 
-__all__: list[str] = []
+from cmath import exp
+
+__all__ = ["exponential"]
+
+
+def exponential(z: complex) -> complex:
+    """Map horizontal lines to rays and vertical lines to circles by ``exp(z)``.
+
+    The image has radius ``exp(z.real)`` and direction ``z.imag`` modulo
+    a full turn. The map is injective on any open horizontal strip of
+    height at most ``2π``.
+
+    References
+    ----------
+    Vega Penagos & Olivero Zapata (2015), §3.3 (``exponencial.mw``).
+    """
+    return exp(z)
