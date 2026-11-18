@@ -35,6 +35,7 @@
     #status:empty { display: none; }
     @media (max-width: 560px) { canvas { aspect-ratio: 1.6; } }
   </style>
+<link rel="stylesheet" href="../web/math.css">
 </head>
 <body>
 <main>
@@ -43,10 +44,11 @@
     <h1>Coplanar capacitive sensor</h1>
     <p>Change the gap and see how two finite-width electrodes couple through a uniform dielectric.</p>
   </header>
+<section class="formula-panel"><h2>Ideal two-strip capacitance</h2><div class="math-display" data-tex="k=\frac{g}{g+2w_{\mathrm{t}}},\qquad k^{\prime}=\sqrt{1-k^2}">k = g/(g + 2wt); k′ = √(1 − k²)</div><div class="math-display" data-tex="C^{\prime}=\varepsilon_0\varepsilon_r\frac{K(k^{\prime})}{K(k)},\qquad C\approx L C^{\prime}">C′ = ε0 εr K(k′)/K(k); C ≈ L C′</div><p>Here g is the full gap, wₜ is the width of each strip, and L is its physical length in meters. K uses the same modulus convention as the waveguide formula; the geometrical definitions of k differ.</p><p class="notation-link"><a href="../docs/notation.md">Notation, domains and normalization</a></p></section>
   <details open><summary>Where this helps · capacitive coupling and sensing</summary>
     <p>Use this model to compare the coupling between two coplanar electrodes, study a spacing change, or estimate the response to a uniform change in dielectric permittivity. At fixed geometry, doubling εᵣ doubles C. The <strong>double-gap comparison</strong> shows the effect of moving the strips apart.</p>
-    <p><strong>Model:</strong> k = g/(g + 2w), k′ = √(1 − k²); C′ = ε₀εᵣ K(k′)/K(k), C ≈ LC′. K(k) = ∫ (1 − k² sin²θ)⁻¹ᐟ² dθ, with θ from 0 to π/2, uses the modulus k; L is the electrode length in meters.</p>
-    <p>The SC derivative is proportional to [(ζ − 1)(ζ + 1)(ζ − k)(ζ + k)]⁻¹ᐟ², with ζ = x/(g/2 + w). It maps the cross-section to a rectangle where the electrostatic problem is simpler. Field-line density is illustrative, not a measured intensity.</p>
+    <p>The equations above use the complete elliptic integral of the first kind, with its modulus convention stated explicitly.</p>
+    <div class="math-display" data-tex="F^{\prime}(\zeta)=\frac{A}{\sqrt{(\zeta-1)(\zeta+1)(\zeta-k)(\zeta+k)}}">F^{\prime}(\zeta)=\frac{A}{\sqrt{(\zeta-1)(\zeta+1)(\zeta-k)(\zeta+k)}}</div><div class="math-display" data-tex="\zeta=\frac{x+iy}{g/2+w_{\mathrm{t}}}">\zeta=\frac{x+iy}{g/2+w_{\mathrm{t}}}</div><p>The four square-root factors come from the SC geometry. The model fixes the normalization and phase. The drawn line density is illustrative and does not measure field magnitude.</p>
     <p>A material sample or nearby object usually occupies only part of the field. That sensing application needs a layered or spatial dielectric model and calibration; this uniform model does not predict that response directly. <a href="../docs/coplanar-sensor.md">Derivation and independent validation</a> · <a href="coplanar-waveguide.html">Compare the 50 Ω guide</a></p>
   </details>
   <div class="controls">

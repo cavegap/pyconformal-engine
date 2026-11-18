@@ -16,6 +16,12 @@ Start with one route: **learn conformality**, **explore boundary problems
 and electronics**, or **map the Moon**. The public gallery links each
 route to interactive examples, explanations and reader exercises.
 
+The [notation guide](docs/notation.md) defines domains, normalizations
+and units. The public site renders equations as native MathML without
+a remote typesetter. See [site security](docs/site-security.md) for
+publication controls and hosting limits, and [SECURITY.md](SECURITY.md)
+for private vulnerability reporting.
+
 ![Four plots show a labeled right triangle before and after rotation, reflection, and dilation](examples/group_p.png)
 
 All four panels use the same scale. The original vertices are

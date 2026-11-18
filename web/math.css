@@ -1,0 +1,16 @@
+/* Native MathML: no visitor-side typesetter, web font or CDN dependency. */
+math{font-family:"Cambria Math","STIX Two Math","Latin Modern Math",math;font-size:1.14em}
+.math-inline{display:inline-block;max-width:100%;vertical-align:middle;overflow-x:auto;overflow-y:hidden;padding:.12em .08em}
+.math-display{max-width:100%;overflow-x:auto;overflow-y:hidden;padding:14px 10px;margin:14px 0;line-height:1.8;font-size:1.12rem}
+.math-display math{min-width:max-content;margin:auto}
+.formula-panel{margin:20px 0;padding:16px 20px;background:#edf4f1;border:1px solid #b4cdc1;border-left:4px solid #17665a;border-radius:6px;color:#15392e}
+.formula-panel h2,.formula-panel h3{font:650 1rem/1.4 system-ui,sans-serif;margin:0 0 8px}
+.formula-panel p{margin:.5em 0;font-size:.94rem;line-height:1.65}
+.formula-panel .math-display{background:white;border-radius:4px;margin:10px 0}
+.formula-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:8px 18px}
+.notation-link{font-size:.9rem}
+.external-image-label{display:inline-block;border:1px solid #bad0c7;border-radius:4px;padding:1px 7px;font-size:.82rem}
+.align-right{text-align:right}.align-left{text-align:left}.align-center{text-align:center}
+.document{max-width:980px}.document>p{max-width:76ch}.document .math-display{background:#eaf3ee;border:1px solid #c8dcd1;border-radius:5px}
+[hidden]{display:none!important}
+@media(max-width:600px){.formula-panel{padding:12px}.math-display{font-size:1rem;padding:12px 6px}}

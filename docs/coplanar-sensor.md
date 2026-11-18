@@ -12,6 +12,12 @@ relative permittivity 3 give approximately **1.211 pF** at a gap of
 
 ## Cross-section model
 
+$$
+C^{\prime}=\varepsilon_0\varepsilon_r\frac{K(k^{\prime})}{K(k)},\quad k=\frac{g}{g+2w_{\mathrm{t}}},\quad C\approx LC^{\prime}.
+$$
+
+See the [notation guide](notation.md) for domains, units and symbol conventions.
+
 The two equal strips have zero thickness. The dielectric is uniform
 throughout the cross-section and the strips extend along an invariant
 longitudinal axis. The length estimate multiplies the 2D capacitance

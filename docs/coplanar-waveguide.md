@@ -9,6 +9,12 @@ is 133.43 pF/m.
 
 ## Model
 
+$$
+Z_0=\frac{\eta_0 K(k^{\prime})}{4\sqrt{\varepsilon_r}K(k)},\qquad k=\frac{w_{\mathrm{t}}}{w_{\mathrm{t}}+2s}.
+$$
+
+See the [notation guide](notation.md) for domains, units and symbol conventions.
+
 The geometry has a thin center strip between two semi-infinite grounds,
 equal gaps, and the same lossless dielectric on both sides. It uses the
 quasi-static limit with zero conductor thickness and no backside metal.

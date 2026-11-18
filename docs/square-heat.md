@@ -7,6 +7,12 @@ The thermal data are an educational extension of the thesis.
 
 ## Boundary data and solution
 
+$$
+T(u,v)=60+40uv\;{}^{\circ}\mathrm C,\qquad\widetilde T(z)=T(S(z)).
+$$
+
+See the [notation guide](notation.md) for domains, units and symbol conventions.
+
 Let `w = u+iv` lie in `[-1,1]²`. Prescribe the following temperatures:
 
 | Edge | Temperature in °C |

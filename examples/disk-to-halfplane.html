@@ -31,6 +31,7 @@
     #location { margin-block: 9px 16px; }
     @media (max-width: 620px) { .planes { grid-template-columns: 1fr; } }
   </style>
+<link rel="stylesheet" href="../web/math.css">
 </head>
 <body>
 <main>
@@ -40,6 +41,7 @@
     <p class="formula"><i>w</i> = <i>i</i>(1 − <i>z</i>)/(1 + <i>z</i>)</p>
     <p>Drag P or use the sliders. Move to the unit circle to follow its image along the real axis.</p>
   </header>
+<section class="formula-panel"><h2>Cayley map</h2><div class="math-display" data-tex="f(z)=i\frac{1-z}{1+z},\qquad f^{\prime}(z)=\frac{-2i}{(1+z)^2}">f(z) = i(1 − z)/(1 + z); f′(z) = −2i/(1 + z)²</div><div class="math-display" data-tex="\operatorname{Im}f(z)=\frac{1-|z|^2}{|1+z|^2}&gt;0\quad (|z|&lt;1)">Im f(z) = (1 − |z|²)/|1 + z|² &gt; 0 for |z| &lt; 1</div><p>The open disk maps to the upper half-plane. The boundary point −1 is a pole, so its image is interpreted on the extended complex plane.</p><p class="notation-link"><a href="../docs/notation.md">Notation, domains and normalization</a></p></section>
   <details><summary>Formula and reference points</summary><p>w = i(1 − z)/(1 + z), with Im w = (1 − |z|²)/|1 + z|². Thus the open unit disk maps into the upper half-plane. Reference points: 0 → i, i → 1, −i → −1, 1 → 0; −1 is the pole. Compare an interior point, a boundary point and the pole with the controls below.</p></details>
   <div class="planes">
     <figure>

@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -47,6 +48,7 @@ def test_output_safety_preserves_unmanaged_directory(tmp_path: Path) -> None:
 def test_allowlisted_build_excludes_secrets_and_rebuilds(tmp_path: Path) -> None:
     (tmp_path / "web").mkdir()
     (tmp_path / "web/site.css").write_text("body{}", encoding="utf-8")
+    (tmp_path / "web/math.css").write_text("math{}", encoding="utf-8")
     (tmp_path / "web/index.html").write_text(
         '<a href="docs/guide.md#exercise">Guide</a>', encoding="utf-8"
     )
@@ -58,6 +60,18 @@ def test_allowlisted_build_excludes_secrets_and_rebuilds(tmp_path: Path) -> None
     for relative in ("examples/index.html", "docs/thesis-guide.md", "docs/exercises.md"):
         (tmp_path / relative).write_text("# Notes", encoding="utf-8")
     (tmp_path / "thesis").mkdir()
+    manifest = [
+        "web/index.html",
+        "web/site.css",
+        "web/math.css",
+        "examples/index.html",
+        "docs/guide.md",
+        "docs/thesis-guide.md",
+        "docs/exercises.md",
+    ]
+    (tmp_path / "docs/notation.md").write_text("# Notation", encoding="utf-8")
+    manifest.append("docs/notation.md")
+    (tmp_path / "web/public-assets.json").write_text(json.dumps(manifest), encoding="utf-8")
     output = build(tmp_path)
     assert not (output / "examples/.env").exists()
     inventory = LinkInventory()

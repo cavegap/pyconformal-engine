@@ -32,7 +32,7 @@
     [hidden] { display: none !important; }
     @media (max-width: 900px) { .planes { grid-template-columns: 1fr; } }
   </style>
-</head>
+<link rel="stylesheet" href="../web/math.css"></head>
 <body>
 <main>
   <header>
@@ -81,6 +81,7 @@
     <div id="geographic" hidden><dt>Approximate lunar coordinates</dt><dd id="lunar-point"></dd></div>
   </dl>
   <p id="status"></p>
+<section class="formula-panel" data-formula-map="square"><h2>Square map</h2><div class="math-display" data-tex="f(z)=z^2,\quad f^{\prime}(z)=2z">f(z) = z²; f′(z) = 2z</div></section><section class="formula-panel" data-formula-map="cube" hidden><h2>Cubic map</h2><div class="math-display" data-tex="f(z)=z^3,\quad f^{\prime}(z)=3z^2">f(z) = z³; f′(z) = 3z²</div></section><section class="formula-panel" data-formula-map="log" hidden><h2>Principal logarithm</h2><div class="math-display" data-tex="f(z)=\operatorname{Log}(1+z),\quad f^{\prime}(z)=\frac{1}{1+z}">f(z) = Log(1 + z); f′(z) = 1/(1 + z)</div></section><section class="formula-panel" data-formula-map="peirce" hidden><h2>Peirce composition</h2><div class="math-display" data-tex="\text{sphere}\longrightarrow\zeta\longrightarrow p\longrightarrow S(p)\longrightarrow w">Sphere → stereographic disk → half-plane → SC square → global arrangement</div></section>
   <p id="formula"></p>
   <footer>Figure 4.5, Vega Penagos &amp; Olivero Zapata (2015).
     Lunar imagery credit NASA / GSFC / Arizona State University.</footer>
@@ -246,6 +247,7 @@
     imageView = renderPanel(image, curves, bounds, selected, data.markers, peirce);
     byId("image-title").textContent = "3 · " + states[mode][0];
     byId("formula").textContent = formulas[mode];
+    document.querySelectorAll("[data-formula-map]").forEach(el => { el.hidden = el.dataset.formulaMap !== mode; });
     byId("source-point").textContent = coordinates(data.source[0][selected]);
     slider.setAttribute("aria-valuetext", byId("source-point").textContent);
     byId("image-point").textContent = coordinates(curves[0][selected]);

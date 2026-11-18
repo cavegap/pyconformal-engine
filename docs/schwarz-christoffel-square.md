@@ -27,6 +27,12 @@ therefore covers only part of the square, while all four corners are marked.
 
 ## Normalization
 
+$$
+S(z)=1+i-\frac{2i}{\kappa}R_F(z+1,z,z-1),\qquad\kappa=R_F(0,1,2).
+$$
+
+See the [notation guide](notation.md) for domains, units and symbol conventions.
+
 Set `K = R_F(0, 1, 2) ≈ 1.3110287771460598`, where `R_F` is Carlson's
 symmetric elliptic integral of the first kind. The map is
 `w(z) = 1 + i − (2i/K) R_F(z+1, z, z−1)`.

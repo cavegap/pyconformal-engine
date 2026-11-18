@@ -2,31 +2,250 @@
 
 from __future__ import annotations
 
+import hashlib
 import html
 import json
 import posixpath
+import re
 import shutil
+import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from urllib.parse import unquote, urlsplit, urlunsplit
 
 import markdown
+from latex2mathml.converter import convert
+from markdown.extensions import Extension
+from markdown.inlinepatterns import InlineProcessor
+from markdown.preprocessors import Preprocessor
 
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "https://github.com/cavegap/pyconformal-engine"
 MARKER = ".pyconformal-build.json"
+MATH_NS = "http://www.w3.org/1998/Math/MathML"
+POLICY = (
+    "default-src 'none'; script-src 'self'; script-src-attr 'none'; "
+    "style-src 'self'; style-src-attr 'none'; img-src 'self' data:; "
+    "font-src 'self'; connect-src 'none'; object-src 'none'; "
+    "frame-src 'none'; worker-src 'none'; media-src 'none'; "
+    "base-uri 'none'; form-action 'none'"
+)
+
+
+def mathml(tex: str, display: bool = False) -> str:
+    """Render bounded author-supplied TeX as validated, inert native MathML."""
+    if len(tex) > 3000 or re.search(
+        r"\\(?:href|url|html\w*|include\w*|input|require|def|newcommand|style|class)\b", tex
+    ):
+        raise ValueError("Unsupported or oversized formula.")
+    rendered = convert(tex, display="block" if display else "inline")
+    if "<!DOCTYPE" in rendered.upper() or "<!ENTITY" in rendered.upper():
+        raise ValueError("MathML document declarations are forbidden.")
+    tree = ET.fromstring(rendered)
+    allowed = {
+        "math",
+        "mrow",
+        "mi",
+        "mn",
+        "mo",
+        "mtext",
+        "mspace",
+        "mfrac",
+        "msqrt",
+        "mroot",
+        "msup",
+        "msub",
+        "msubsup",
+        "munder",
+        "mover",
+        "munderover",
+        "mtable",
+        "mtr",
+        "mtd",
+        "mstyle",
+        "mpadded",
+        "mphantom",
+        "menclose",
+        "mmultiscripts",
+        "mprescripts",
+        "none",
+    }
+    attributes = {
+        "display",
+        "form",
+        "mathvariant",
+        "stretchy",
+        "fence",
+        "separator",
+        "lspace",
+        "rspace",
+        "largeop",
+        "movablelimits",
+        "accent",
+        "accentunder",
+        "rowspacing",
+        "columnspacing",
+        "rowalign",
+        "columnalign",
+        "columnlines",
+        "rowlines",
+        "linethickness",
+        "height",
+        "width",
+        "depth",
+        "voffset",
+        "notation",
+        "equalrows",
+        "equalcolumns",
+        "scriptlevel",
+        "displaystyle",
+        "columnspan",
+        "rowspan",
+        "minsize",
+        "maxsize",
+        "symmetric",
+    }
+    nodes = list(tree.iter())
+    if len(nodes) > 2000:
+        raise ValueError("Formula exceeds the element limit.")
+    for node in nodes:
+        if node.tag not in {f"{{{MATH_NS}}}{tag}" for tag in allowed}:
+            raise ValueError("Unsupported MathML element.")
+        if any(key not in attributes for key in node.attrib):
+            raise ValueError("Unsupported MathML attribute.")
+        if any(len(value) > 80 for value in node.attrib.values()):
+            raise ValueError("Oversized MathML attribute.")
+    semantics = ET.Element(f"{{{MATH_NS}}}semantics")
+    for child in list(tree):
+        tree.remove(child)
+        semantics.append(child)
+    annotation = ET.SubElement(
+        semantics, f"{{{MATH_NS}}}annotation", {"encoding": "application/x-tex"}
+    )
+    annotation.text = tex
+    tree.append(semantics)
+    ET.register_namespace("", MATH_NS)
+    return ET.tostring(tree, encoding="unicode")
+
+
+def math_container(tex: str, display: bool) -> str:
+    """Wrap formulas in a scrollable block or an inline span."""
+    tag = "div" if display else "span"
+    css = "math-display" if display else "math-inline"
+    return f'<{tag} class="{css}">{mathml(tex, display)}</{tag}>'
+
+
+class MathBlocks(Preprocessor):
+    """Render display formulas after fenced code has been protected."""
+
+    def run(self, lines: list[str]) -> list[str]:
+        """Replace dollar-delimited blocks with protected rendered markup."""
+
+        def replace(match: re.Match[str]) -> str:
+            return "\n\n" + self.md.htmlStash.store(math_container(match[1].strip(), True)) + "\n\n"
+
+        return re.sub(
+            r"(?m)^\$\$\s*\n(.*?)\n\$\$\s*$", replace, "\n".join(lines), flags=re.DOTALL
+        ).split("\n")
+
+
+class InlineMath(InlineProcessor):
+    """Render inline formulas after Markdown code spans have been protected."""
+
+    # types-Markdown exposes the legacy Pattern signature here; the runtime
+    # InlineProcessor API receives both match and data and returns a triple.
+    def handleMatch(self, match: re.Match[str], data: str) -> tuple[str, int, int]:  # type: ignore[override]  # noqa: N802
+        """Return an HTML-stash placeholder rather than reparsing MathML text."""
+        return (
+            self.md.htmlStash.store(math_container(match[1], False)),
+            match.start(0),
+            match.end(0),
+        )
+
+
+class MathExtension(Extension):
+    """Support explicit dollar-delimited TeX in the thesis companion."""
+
+    def extendMarkdown(self, md: markdown.Markdown) -> None:  # noqa: N802
+        """Keep program listings separate from mathematical notation."""
+        md.preprocessors.register(MathBlocks(md), "math-blocks", 24)
+        md.inlinePatterns.register(
+            InlineMath(r"(?<!\\)\$(?!\$)([^\n$]+?)\$(?!\$)", md), "math-inline", 185
+        )
+
+
+def render_html_math(content: str) -> str:
+    """Replace explicit HTML formula fallbacks at build time."""
+
+    def replace(match: re.Match[str]) -> str:
+        tex = html.unescape(match[3])
+        rendered = mathml(tex, match[1] == "div")
+        return f"<{match[1]}{match[2]}>{rendered}</{match[1]}>"
+
+    return re.sub(
+        r'<(span|div)([^>]*\bdata-tex="([^"]+)"[^>]*)>.*?</\1>', replace, content, flags=re.DOTALL
+    )
+
+
+def harden_page(content: str, path: Path, output: Path) -> str:
+    """Move inline code to local files and add an enforced resource policy."""
+    content = render_html_math(content)
+    content = re.sub(
+        r'<(td|th) style="text-align:\s*(left|right|center);?">',
+        lambda match: f'<{match[1]} class="align-{match[2]}">',
+        content,
+    )
+    generated = output / "assets/generated"
+    generated.mkdir(parents=True, exist_ok=True)
+
+    def externalize(match: re.Match[str]) -> str:
+        tag, attrs, text = match[1], match[2], match[3]
+        if tag == "script" and re.search(r"\bsrc=", attrs):
+            return match[0]
+        if attrs.strip():
+            raise ValueError(f"Unexpected inline {tag} attributes in {path.name}")
+        extension = "js" if tag == "script" else "css"
+        digest = hashlib.sha256(text.encode()).hexdigest()[:20]
+        asset = generated / f"{path.stem}-{digest}.{extension}"
+        asset.write_bytes(text.encode("utf-8"))
+        href = posixpath.relpath(asset.as_posix(), path.parent.as_posix())
+        return (
+            f'<script src="{href}"></script>'
+            if tag == "script"
+            else f'<link rel="stylesheet" href="{href}">'
+        )
+
+    content = re.sub(
+        r"<(script|style)([^>]*)>(.*?)</\1>", externalize, content, flags=re.DOTALL | re.IGNORECASE
+    )
+    if not re.search(r"<html[\s>]", content, re.IGNORECASE):
+        content = "<!doctype html><html><head></head><body>" + content + "</body></html>"
+    if not re.search(r"<head[\s>]", content, re.IGNORECASE):
+        content = re.sub(r"(<html[^>]*>)", r"\1<head>", content, count=1, flags=re.IGNORECASE)
+        content = content.replace("<main>", "</head><body><main>", 1)
+        content = content.replace("</html>", "</body></html>")
+    security = (
+        f'<meta http-equiv="Content-Security-Policy" content="{html.escape(POLICY, quote=True)}">'
+        '<meta name="referrer" content="no-referrer">'
+    )
+    content = re.sub(r"(<head[^>]*>)", r"\1" + security, content, count=1, flags=re.IGNORECASE)
+    return content
 
 
 def public_link(value: str, source: Path, root: Path) -> str:
     """Convert repository Markdown and source links without changing externals."""
     parsed = urlsplit(value)
+    if parsed.scheme and parsed.scheme not in {"https", "mailto"}:
+        raise ValueError(f"Unsupported link scheme in {source.name}")
     if parsed.scheme or parsed.netloc or not parsed.path:
         return value
     target = (source.parent / unquote(parsed.path)).resolve()
     if not target.is_relative_to(root):
         raise ValueError(f"Link escapes repository: {source.name}: {value}")
     relative = target.relative_to(root)
+    if relative == Path("web/math.css"):
+        target = root / "assets/math.css"
     if relative.parts and relative.parts[0] in {"src", "tests", ".github"}:
         kind = "tree" if target.is_dir() else "blob"
         return f"{REPOSITORY}/{kind}/main/{relative.as_posix()}"
@@ -51,6 +270,14 @@ class LinkRewriter(HTMLParser):
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         """Serialize attributes, converting only local href and src targets."""
+        attributes = dict(attrs)
+        if tag == "img" and urlsplit(attributes.get("src") or "").netloc:
+            self.parts.append(
+                '<span class="external-image-label">'
+                + html.escape(attributes.get("alt") or "External image")
+                + "</span>"
+            )
+            return
         values = []
         for key, value in attrs:
             if value is None:
@@ -101,7 +328,7 @@ def rewrite(content: str, source: Path, root: Path) -> str:
 
 def document(content: str, source: Path, root: Path) -> str:
     """Render a Markdown companion page with shared navigation and typography."""
-    body = markdown.markdown(content, extensions=["tables", "fenced_code", "toc"])
+    body = markdown.markdown(content, extensions=["tables", "fenced_code", "toc", MathExtension()])
     body = body.replace("<table>", '<div class="table-scroll"><table>').replace(
         "</table>", "</table></div>"
     )
@@ -116,9 +343,9 @@ def document(content: str, source: Path, root: Path) -> str:
     source_url = f"{REPOSITORY}/blob/main/{source.relative_to(root).as_posix()}"
     page = f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{html.escape(title)} | PyConformal Engine</title><link rel="stylesheet" href="{root_link("assets/site.css")}"></head>
+<title>{html.escape(title)} | PyConformal Engine</title><link rel="stylesheet" href="{root_link("assets/site.css")}"><link rel="stylesheet" href="{root_link("assets/math.css")}"></head>
 <body><header class="site-header"><a class="brand" href="{root_link("index.html")}">PyConformal Engine</a>
-<nav aria-label="Main"><a href="{root_link("examples/index.html")}">Gallery</a><a href="{root_link("docs/thesis-guide.html")}">Thesis companion</a><a href="{root_link("docs/exercises.html")}">Exercises</a><a href="{REPOSITORY}">GitHub</a></nav></header>
+<nav aria-label="Main"><a href="{root_link("examples/index.html")}">Gallery</a><a href="{root_link("docs/thesis-guide.html")}">Thesis companion</a><a href="{root_link("docs/exercises.html")}">Exercises</a><a href="{root_link("docs/notation.html")}">Notation</a><a href="{REPOSITORY}">GitHub</a></nav></header>
 <main class="document"><p class="breadcrumb"><a href="{root_link("index.html")}">Home</a> / Companion</p>
 {body}
 <p class="source-link"><a href="{source_url}">Read this page in the repository</a></p></main>
@@ -141,6 +368,125 @@ class LinkInventory(HTMLParser):
                 self.links.append(value)
             if value and key in {"id", "name"}:
                 self.anchors.add(value)
+
+
+class PolicyInventory(LinkInventory):
+    """Fail the build for active markup outside the static-site contract."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.policy_seen = False
+        self.in_script = False
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        """Reject event attributes, embeds and remote resources before publication."""
+        super().handle_starttag(tag, attrs)
+        attributes = dict(attrs)
+        if tag in {"form", "iframe", "object", "embed", "base", "style"}:
+            raise ValueError(f"Forbidden element: {tag}")
+        if any(key.startswith("on") or key == "style" for key in attributes):
+            raise ValueError("Inline event or style attribute is forbidden.")
+        if (
+            tag == "meta"
+            and (attributes.get("http-equiv") or "").lower() == "content-security-policy"
+        ):
+            if attributes.get("content") != POLICY or self.policy_seen:
+                raise ValueError("Unexpected or duplicate content security policy.")
+            self.policy_seen = True
+        if tag == "script":
+            if not self.policy_seen or not attributes.get("src"):
+                raise ValueError("Scripts must be local external files after the security policy.")
+            self.in_script = True
+        for key in ("href", "src"):
+            value = attributes.get(key)
+            if not value:
+                continue
+            if re.search(r"[\x00-\x1f]", value):
+                raise ValueError("Control character in a URL.")
+            parsed = urlsplit(value)
+            if parsed.scheme and parsed.scheme not in {"https", "mailto"}:
+                raise ValueError("Unsafe URL scheme.")
+            if (key == "src" or tag == "link") and (parsed.scheme or parsed.netloc):
+                if tag == "link" and attributes.get("rel") == "canonical":
+                    continue
+                raise ValueError("Remote embedded resources are forbidden.")
+
+    def handle_data(self, data: str) -> None:
+        """Inline executable code is not part of the published format."""
+        if self.in_script and data.strip():
+            raise ValueError("Inline scripts are forbidden.")
+
+    def handle_endtag(self, tag: str) -> None:
+        """Track external-script closing tags."""
+        if tag == "script":
+            self.in_script = False
+
+
+def audit_publication(output: Path) -> None:
+    """Check resource policy, known secret signatures and executable sinks."""
+    signatures = re.compile(
+        r"gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|"
+        r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|AKIA[A-Z0-9]{16}"
+    )
+    for path in output.rglob("*"):
+        if not path.is_file() or path.suffix not in {
+            ".html",
+            ".js",
+            ".css",
+            ".json",
+            ".py",
+            ".cff",
+        }:
+            continue
+        text = path.read_text(encoding="utf-8")
+        if signatures.search(text):
+            raise ValueError(f"Possible secret in public file: {path.name}")
+        if path.suffix == ".html":
+            parser = PolicyInventory()
+            parser.feed(text)
+            if not parser.policy_seen:
+                raise ValueError(f"Missing content security policy: {path.name}")
+        if path.suffix == ".js" and re.search(
+            r"\beval\s*\(|\bnew\s+Function\s*\(|document\.write\s*\(|"
+            r"\.(?:innerHTML|outerHTML)\s*=|insertAdjacentHTML\s*\(|"
+            r"\bfetch\s*\(|XMLHttpRequest|\bWebSocket\s*\(",
+            text,
+        ):
+            raise ValueError(f"Unreviewed executable or network sink: {path.name}")
+        if path.suffix == ".css" and re.search(r"@import\b|url\s*\(", text, re.IGNORECASE):
+            raise ValueError(f"CSS resource loading needs explicit review: {path.name}")
+
+
+def publication_sources(root: Path) -> list[Path]:
+    """Read the reviewed manifest and reject traversal, hidden files and symlinks."""
+    data = json.loads((root / "web/public-assets.json").read_text(encoding="utf-8"))
+    if not isinstance(data, list) or not all(isinstance(item, str) for item in data):
+        raise ValueError("The public asset manifest must be a list of relative paths.")
+    result = []
+    for name in data:
+        relative = Path(name)
+        if (
+            relative.is_absolute()
+            or "\\" in name
+            or ":" in name
+            or any(
+                part.startswith(".") or part in {"node_modules", "__pycache__", "_build"}
+                for part in relative.parts
+            )
+            or relative.as_posix() != name
+        ):
+            raise ValueError("Unsafe public asset path.")
+        path = root / relative
+        if (
+            not path.resolve().is_relative_to(root)
+            or any(parent.is_symlink() for parent in (path, *path.parents) if parent != root)
+            or not path.is_file()
+        ):
+            raise ValueError(f"Missing or unsafe public asset: {name}")
+        result.append(path)
+    if len(set(result)) != len(result):
+        raise ValueError("Duplicate public asset path.")
+    return result
 
 
 def validate_site(output: Path) -> tuple[int, int]:
@@ -180,54 +526,54 @@ def build(root: Path = ROOT) -> Path:
     with TemporaryDirectory(prefix="pyconformal-pages-") as temporary:
         staging = Path(temporary) / "site"
         staging.mkdir()
+        sources = publication_sources(root)
+        required = {root / "web" / name for name in ("index.html", "site.css", "math.css")}
+        if not required.issubset(sources):
+            raise ValueError("Public manifest must include the reviewed templates and styles.")
         (staging / "assets").mkdir()
-        shutil.copy2(root / "web/site.css", staging / "assets/site.css")
+        for name in ("site.css", "math.css"):
+            shutil.copy2(root / "web" / name, staging / "assets" / name)
         landing = (root / "web/index.html").read_text(encoding="utf-8")
         (staging / "index.html").write_text(
             rewrite(landing, root / "index.html", root), encoding="utf-8"
         )
-        suffixes = {".html", ".js", ".json", ".jpg", ".jpeg", ".png", ".py"}
-        for source in (root / "examples").iterdir():
-            if source.is_symlink():
-                raise ValueError(f"Symlink not permitted in public assets: {source.name}")
-            if not source.is_file() or source.suffix not in suffixes:
+        for source in sources:
+            relative = source.relative_to(root)
+            if relative.parts[0] == "web":
                 continue
-            target = staging / "examples" / source.name
-            target.parent.mkdir(exist_ok=True)
-            if source.suffix == ".html":
+            if relative.parts[0] not in {
+                "examples",
+                "docs",
+                "thesis",
+                "scripts",
+                "notebooks",
+            } and str(relative) not in {
+                "README.md",
+                "ROADMAP.md",
+                "CHANGELOG.md",
+                "SECURITY.md",
+                "CITATION.cff",
+                "LICENSE",
+            }:
+                raise ValueError("Public source outside the curated directories.")
+            target = staging / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if source.suffix == ".md":
+                target = target.with_suffix(".html")
+                target.write_text(
+                    document(source.read_text(encoding="utf-8"), source, root), encoding="utf-8"
+                )
+            elif source.suffix == ".html":
                 target.write_text(
                     rewrite(source.read_text(encoding="utf-8"), source, root), encoding="utf-8"
                 )
             else:
                 shutil.copy2(source, target)
-        markdown_files = [
-            root / name
-            for name in ("README.md", "ROADMAP.md", "CHANGELOG.md")
-            if (root / name).is_file()
-        ]
-        markdown_files.extend((root / "docs").rglob("*.md"))
-        markdown_files.extend(
-            root / folder / "README.md"
-            for folder in ("examples", "thesis", "notebooks")
-            if (root / folder / "README.md").is_file()
-        )
-        for source in markdown_files:
-            target = staging / source.relative_to(root).with_suffix(".html")
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(
-                document(source.read_text(encoding="utf-8"), source, root), encoding="utf-8"
+        for page in staging.rglob("*.html"):
+            page.write_text(
+                harden_page(page.read_text(encoding="utf-8"), page, staging), encoding="utf-8"
             )
-        extras = [root / "LICENSE", root / "CITATION.cff"]
-        extras.extend((root / "thesis").glob("*.pdf"))
-        extras.extend(
-            root / "scripts" / name
-            for name in ("recover_lunar_outlines.py", "verify_browser_math.py", "build_pages.py")
-        )
-        for source in extras:
-            if source.is_file():
-                target = staging / source.relative_to(root)
-                target.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(source, target)
+        audit_publication(staging)
         (staging / ".nojekyll").touch()
         pages, links = validate_site(staging)
         (staging / MARKER).write_text(

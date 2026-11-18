@@ -35,6 +35,7 @@
     .field-key { color: #915031; }
     @media (max-width: 620px) { .planes { grid-template-columns: 1fr; } }
   </style>
+<link rel="stylesheet" href="../web/math.css">
 </head>
 <body>
 <main>
@@ -50,8 +51,9 @@
       <strong class="field-key">Electric field lines</strong> ·
       The field runs from the 1 V electrode to the 0 V electrode.</p>
   </header>
+<section class="formula-panel"><h2>Schwarz–Christoffel map</h2><div class="math-display" data-tex="S(z)=1+i-\frac{2i}{\kappa}R_F(z+1,z,z-1)">S(z) = 1 + i − (2i/κ) RF(z + 1, z, z − 1)</div><div class="math-display" data-tex="\kappa=R_F(0,1,2),\qquad z\in\mathbb{H}=\{z:\operatorname{Im}z&gt;0\}">κ = RF(0,1,2); Im z &gt; 0</div><p>Boundary values are limits from the upper half-plane. The target square has real and imaginary coordinates between −1 and 1. The interior reference is S(i) = 0.</p><p class="notation-link"><a href="../docs/notation.md">Notation, domains and normalization</a></p></section>
   <details open><summary>The transformation and a physical example</summary>
-    <p><strong>w = 1 + i − (2i/κ) R<sub>F</sub>(z + 1, z, z − 1)</strong>, κ = R<sub>F</sub>(0, 1, 2) ≈ 1.311028777. The analytic branch is taken in Im z &gt; 0, with boundary limits on the real axis. R<sub>F</sub> is Carlson’s symmetric elliptic integral.</p>
+    <p>The displayed formula uses Carlson’s symmetric elliptic integral. The branch is analytic in the upper half-plane; the real-axis values are its boundary limits.</p>
     <p>Corner correspondence: −1 → −1 + i; 0 → −1 − i; 1 → 1 − i; ∞ → 1 + i. The interior reference i maps to the center 0.</p>
     <p>Try <strong>Electrostatics</strong>: V = (Im w + 1)/2 solves the unit-voltage square problem, with insulated vertical sides. Its pullback V(z) solves the corresponding half-plane problem. <a href="../docs/schwarz-christoffel-square.md">Normalization and verification</a></p>
   </details>

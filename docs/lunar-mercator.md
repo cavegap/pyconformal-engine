@@ -31,6 +31,12 @@ The requested crop is supplied so the example can regenerate offline.
 
 ## Mapping
 
+$$
+f(z)=z^3,\qquad |f^{\prime}(z)|=3|z|^2,\qquad J(z)=9|z|^4.
+$$
+
+See the [notation guide](notation.md) for domains, units and symbol conventions.
+
 We place the Mercator origin at longitude 55° W and latitude 6° N.
 The 40° longitude span sets 12 source units, and the same angular
 scale sets the vertical dimension in spherical Mercator coordinates.

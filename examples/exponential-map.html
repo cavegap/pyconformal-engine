@@ -31,6 +31,7 @@
     .circle { color: #14645b; }
     @media (max-width: 620px) { .planes { grid-template-columns: 1fr; } }
   </style>
+<link rel="stylesheet" href="../web/math.css">
 </head>
 <body>
 <main>
@@ -41,6 +42,7 @@
     <p>Drag P or use the sliders. A <strong class="ray">horizontal line</strong> maps to a segment of a ray.
       A <strong class="circle">vertical line</strong> maps to a circle over one full turn.</p>
   </header>
+<section class="formula-panel"><h2>Exponential map</h2><div class="math-display" data-tex="f(x+iy)=e^x(\cos y+i\sin y),\qquad f^{\prime}(z)=e^z">f(x + iy) = exp(x)(cos y + i sin y); f′(z) = exp z</div><div class="math-display" data-tex="f(z+2\pi i)=f(z),\qquad |f^{\prime}(z)|=e^{\operatorname{Re}z}">f(z + 2πi) = f(z); local length scale = exp(Re z)</div><p>The derivative never vanishes. The map is locally conformal everywhere, and becomes one-to-one when restricted to a suitable open horizontal strip.</p><p class="notation-link"><a href="../docs/notation.md">Notation, domains and normalization</a></p></section>
   <details><summary>Formula and object example</summary><p>w = exp(x + iy) = eˣ(cos y + i sin y); f′(z) = exp z never vanishes. Local angles are preserved, but points separated by 2πi have the same image. Horizontal lines become rays and vertical lines become circles. <a href="object-reveal.html">See a logarithm recover a recognizable house from an exponential deformation.</a></p></details>
   <div class="planes">
     <figure>

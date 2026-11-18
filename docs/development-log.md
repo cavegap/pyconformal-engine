@@ -3,6 +3,31 @@
 This log records local development, not published package releases.
 Version-control commits remain the authoritative file history.
 
+## 2026-11-18: scientific notation and static-site hardening
+
+- Added a notation guide and native MathML generated from TeX at build
+  time. Main formulas in twelve interactive examples now use fractions,
+  integrals, matrices and explicit domains rather than code-like text.
+  Distinguished the SC constant from the elliptic integral, trace width
+  from the complex image coordinate, and per-length capacitance from a
+  derivative. Long formulas scroll within their panel on mobile.
+- Added a reviewed public-asset manifest, a restrictive resource policy,
+  local script/style extraction, unsafe-markup checks and limited secret
+  signature detection. No visitor-side typesetter or remote math font
+  is needed. Added a security policy with explicit hosting boundaries.
+- Unified validation and Pages publication: the deployment requires all
+  Python/OS jobs, lint, types and browser/policy checks to pass. Pinned
+  action commits, isolated deployment privileges and hashed the two
+  site-build dependencies. Added weekly dependency-update proposals.
+- Local validation: 329 Python tests, 38 reader checkpoints, numerical
+  browser/Python comparisons, Ruff and MyPy passed. Fifteen page routes
+  passed browser checks at 1440 px and 430 px; policy probes blocked
+  inline execution and outbound connections. The generated companion
+  contains 44 HTML pages. This review is not an independent security audit.
+- Enabled and verified dependency alerts, security-update proposals and
+  private vulnerability reporting. Account authentication and hosting
+  response headers remain separate owner/hosting responsibilities.
+
 ## 2026-11-18: v0.1.0a1 publication preparation
 
 - Added a public landing page with learning, application and lunar

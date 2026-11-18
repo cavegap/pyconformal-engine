@@ -5,6 +5,9 @@ Start with [the thesis companion](thesis-guide.md) and open the
 pages with runnable examples and distinguishes historical reconstructions
 from new extensions.
 
+Read the [notation and normalization guide](notation.md) and the
+[security and publication boundaries](site-security.md).
+
 ## Reader route
 
 1. [Read with the thesis](thesis-guide.md): concepts, notation and figure references.
