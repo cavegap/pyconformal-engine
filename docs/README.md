@@ -36,3 +36,9 @@ The [public gallery and companion](https://cavegap.github.io/pyconformal-engine/
 are built from these sources with a lightweight static renderer. See
 [publication and preview instructions](publishing.md). A larger Sphinx
 API reference remains future work.
+
+## Sources and scope
+
+Read [Sources and scope](sources-and-scope.md) for the thesis and 2016 Peirce reference,
+model assumptions, lunar data attribution and the distinction between reconstruction,
+software extension and research proposals.

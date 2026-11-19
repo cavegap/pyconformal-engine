@@ -36,7 +36,7 @@
     @media (max-width: 560px) { canvas { aspect-ratio: 1.6; } }
   </style>
 <link rel="stylesheet" href="../web/math.css">
-</head>
+<link rel="stylesheet" href="example-guide.css"></head>
 <body>
 <main>
   <header>
@@ -63,7 +63,7 @@
     <div><dt>Capacitance if gap doubles</dt><dd id="double-gap"></dd></div>
   </dl>
   <p id="status" aria-live="polite"></p>
-  <figure>
+  <section class="example-guide" aria-label="How to explore this example"><h2>How to explore this example</h2><ol><li><strong>Change the geometry</strong><p>Edit electrode width, full gap g, length L and relative permittivity. Use the fields rather than dragging the drawing.</p></li><li><strong>Compare the outputs</strong><p>C′ is capacitance per length. C ≈ LC′ uses the entered length. The third value recomputes C for twice the gap.</p></li><li><strong>Read the colors</strong><p>The right red drive electrode is at 1 V; the left blue sense electrode is at 0 V. Field curves show direction, not quantitative density.</p></li></ol><p class="guide-limit">Larger uniform permittivity increases capacitance. A localized material sample needs a spatial dielectric model and calibration; this example does not predict that response.</p></section><figure><p class="interaction-badge is-result">Model output · edit the parameter fields</p>
     <figcaption>Cross-section and electric field lines</figcaption>
     <div class="diagram-key">
       <span><i class="swatch drive" aria-hidden="true"></i> Drive · 1 V</span>
@@ -77,7 +77,7 @@
   <footer>Zero-thickness strips in a uniform dielectric. The length
     estimate uses the two-dimensional solution and omits longitudinal end
     effects. <a href="../docs/coplanar-sensor.md">Model and numerical verification</a>.</footer>
-</main>
+<nav class="example-route" aria-label="Example reading route"><a href="index.html">All examples</a><a href="../docs/coplanar-sensor.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
 <script>
   const byId = (id) => document.getElementById(id);
   const controls = ["width", "gap", "length", "permittivity"].map(byId);
@@ -240,4 +240,4 @@
   render();
 </script>
 </body>
-</html>
+<script src="example-guide.js"></script></html>

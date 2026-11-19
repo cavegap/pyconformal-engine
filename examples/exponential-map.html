@@ -32,7 +32,7 @@
     @media (max-width: 620px) { .planes { grid-template-columns: 1fr; } }
   </style>
 <link rel="stylesheet" href="../web/math.css">
-</head>
+<link rel="stylesheet" href="example-guide.css"></head>
 <body>
 <main>
   <header>
@@ -44,19 +44,19 @@
   </header>
 <section class="formula-panel"><h2>Exponential map</h2><div class="math-display" data-tex="f(x+iy)=e^x(\cos y+i\sin y),\qquad f^{\prime}(z)=e^z">f(x + iy) = exp(x)(cos y + i sin y); f′(z) = exp z</div><div class="math-display" data-tex="f(z+2\pi i)=f(z),\qquad |f^{\prime}(z)|=e^{\operatorname{Re}z}">f(z + 2πi) = f(z); local length scale = exp(Re z)</div><p>The derivative never vanishes. The map is locally conformal everywhere, and becomes one-to-one when restricted to a suitable open horizontal strip.</p><p class="notation-link"><a href="../docs/notation.md">Notation, domains and normalization</a></p></section>
   <details><summary>Formula and object example</summary><p>w = exp(x + iy) = eˣ(cos y + i sin y); f′(z) = exp z never vanishes. Local angles are preserved, but points separated by 2πi have the same image. Horizontal lines become rays and vertical lines become circles. <a href="object-reveal.html">See a logarithm recover a recognizable house from an exponential deformation.</a></p></details>
-  <div class="planes">
-    <figure>
-      <figcaption>Source · rectangular grid</figcaption>
+  <section class="example-guide" aria-label="How to explore this example"><h2>How to explore this example</h2><ol><li><strong>Move the source</strong><p>Change x and y using the source plot or sliders. The y slider is displayed in degrees; source coordinates use radians.</p></li><li><strong>Match the colors</strong><p>The brown horizontal line becomes a ray segment. The green vertical line becomes a circle. Their intersection is P → P′.</p></li><li><strong>Compare the edges</strong><p>The −180°/+180° button changes y by 2π. The source point moves while its image stays at the same location.</p></li></ol><p class="guide-limit">The exponential is locally conformal but periodic. Small image circles for negative x are the expected contraction, not a missing curve.</p></section><div class="planes">
+    <figure class="interactive-source">
+      <p class="interaction-badge">Move here · click or drag P</p><figcaption>Source · rectangular grid</figcaption>
       <canvas id="source" role="img" aria-label="Complex plane with a horizontal and vertical line through P"></canvas>
     </figure>
-    <figure>
+    <figure><p class="interaction-badge is-result">Linked image · follows the source</p>
       <figcaption>Image · circular grid</figcaption>
       <canvas id="image" role="img" aria-label="Complex plane with the mapped ray segment and circle through P prime"></canvas>
     </figure>
   </div>
   <div class="controls">
     <label>Real part of P <input id="real" type="range" min="-1.5" max="1.5" step=".01" value=".70"></label>
-    <label>Imaginary part of P (degrees) <input id="angle" type="range" min="-180" max="180" step="1" value="55"></label>
+    <label>Imaginary coordinate y · displayed in degrees <input id="angle" type="range" min="-180" max="180" step="1" value="55"></label>
     <button id="wrap" type="button">Compare −180° and +180°</button>
     <button id="reset" type="button">Reset</button>
   </div>
@@ -68,7 +68,7 @@
   </dl>
   <p id="period" aria-live="polite">The top and bottom edges differ by 2πi and have the same image.</p>
   <footer>Vega Penagos &amp; Olivero Zapata (2015), §3.3. Original Maple worksheet <code>exponencial.mw</code>.</footer>
-</main>
+<nav class="example-route" aria-label="Example reading route"><a href="index.html">All examples</a><a href="../docs/thesis-guide.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
 <script>
   const byId = (id) => document.getElementById(id);
   const source = byId("source");
@@ -183,4 +183,4 @@
   render();
 </script>
 </body>
-</html>
+<script src="example-guide.js"></script></html>

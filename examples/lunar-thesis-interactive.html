@@ -32,7 +32,7 @@
     [hidden] { display: none !important; }
     @media (max-width: 900px) { .planes { grid-template-columns: 1fr; } }
   </style>
-<link rel="stylesheet" href="../web/math.css"></head>
+<link rel="stylesheet" href="../web/math.css"><link rel="stylesheet" href="example-guide.css"></head>
 <body>
 <main>
   <header>
@@ -50,17 +50,17 @@
     <label><input id="secondary" type="checkbox" checked> Show smaller outlines</label>
     <label id="detail-control" hidden><input id="detail" type="checkbox"> Zoom to tracing</label>
   </div>
-  <div class="planes">
-    <figure>
-      <figcaption>1 · Lunar sphere</figcaption>
+  <section class="example-guide" aria-label="How to explore this example"><h2>How to explore this example</h2><ol><li><strong>Follow one point</strong><p>Click near the cyan outline in any view or use the position slider. The selection snaps to the nearest existing sample.</p></li><li><strong>Compare the chain</strong><p>The globe gives context, Mercator is the source tracing, and the third panel shows its chosen transform. A–D are matching reference vertices; P′ marks the transformed selection.</p></li><li><strong>Switch the map</strong><p>Choose square, cube, logarithm or Peirce without changing the selected sample. Zoom to tracing is available in Peirce mode.</p></li></ol><p class="guide-limit">The historical registration is approximate. The cyan outline is an archival reconstruction, not a surveyed crater boundary. Zoom changes the view, not the mathematical coordinates.</p></section><div class="planes">
+    <figure class="interactive-source">
+      <p class="interaction-badge">Select here · click the cyan contour</p><figcaption>1 · Lunar sphere</figcaption>
       <canvas id="sphere" role="img" aria-label="The same traced contour on an orthographic lunar globe, centered at 0 degrees longitude and 30 degrees north."></canvas>
     </figure>
-    <figure>
-      <figcaption>2 · Mercator tracing</figcaption>
+    <figure class="interactive-source">
+      <p class="interaction-badge">Select here · click the cyan contour</p><figcaption>2 · Mercator tracing</figcaption>
       <canvas id="source" role="img" aria-label="Lunar outline traced for Figure 4.5, with reference vertices A through D and selected point P."></canvas>
     </figure>
-    <figure>
-      <figcaption id="image-title">Image · square map</figcaption>
+    <figure class="interactive-source">
+      <p class="interaction-badge">Select here · click the cyan contour</p><figcaption id="image-title">Image · square map</figcaption>
       <canvas id="image" role="img" aria-label="Mapped lunar outline with reference vertices A through D and the image of the selected point."></canvas>
     </figure>
   </div>
@@ -85,7 +85,7 @@
   <p id="formula"></p>
   <footer>Figure 4.5, Vega Penagos &amp; Olivero Zapata (2015).
     Lunar imagery credit NASA / GSFC / Arizona State University.</footer>
-</main>
+<nav class="example-route" aria-label="Example reading route"><a href="index.html">All examples</a><a href="../docs/lunar-thesis-outlines.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
 <script src="lunar-thesis-data.js"></script>
 <script>
   const byId = (id) => document.getElementById(id);
@@ -226,6 +226,10 @@
     ctx.strokeStyle = "#fff";
     ctx.lineWidth = 2;
     ctx.stroke();
+    ctx.font = "bold 14px system-ui"; ctx.lineWidth = 5; ctx.strokeStyle = "#173745";
+    const selectedLabel = canvas.id === "image" ? "P′" : "P";
+    ctx.strokeText(selectedLabel, x + 13, y + 22); ctx.fillStyle = "white";
+    ctx.fillText(selectedLabel, x + 13, y + 22);
     return { project, boundary: curves[0] };
   }
 
@@ -332,4 +336,4 @@
   }
 </script>
 </body>
-</html>
+<script src="example-guide.js"></script></html>

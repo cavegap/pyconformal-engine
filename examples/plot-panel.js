@@ -14,7 +14,9 @@ window.plotPanel = function(canvas, bounds) {
   }
   function label(text, point, dx=9, dy=-9, color='#17374a') {
     const [x,y]=project(point); ctx.font='bold 12px system-ui'; ctx.lineWidth=4;
-    ctx.strokeStyle='white'; ctx.strokeText(text,x+dx,y+dy); ctx.fillStyle=color; ctx.fillText(text,x+dx,y+dy);
+    const labelX=Math.max(8,Math.min(width-8-ctx.measureText(text).width,x+dx));
+    const labelY=Math.max(16,Math.min(height-8,y+dy));
+    ctx.strokeStyle='white'; ctx.strokeText(text,labelX,labelY); ctx.fillStyle=color; ctx.fillText(text,labelX,labelY);
   }
   function dot(point, text='', color='#ffd479') {
     const [x,y]=project(point); ctx.beginPath(); ctx.arc(x,y,5.5,0,2*Math.PI);

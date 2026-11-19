@@ -36,7 +36,7 @@
     @media (max-width: 620px) { .planes { grid-template-columns: 1fr; } }
   </style>
 <link rel="stylesheet" href="../web/math.css">
-</head>
+<link rel="stylesheet" href="example-guide.css"></head>
 <body>
 <main>
   <header>
@@ -58,12 +58,12 @@
     <p>Try <strong>Electrostatics</strong>: V = (Im w + 1)/2 solves the unit-voltage square problem, with insulated vertical sides. Its pullback V(z) solves the corresponding half-plane problem. <a href="../docs/schwarz-christoffel-square.md">Normalization and verification</a></p>
   </details>
   <p><a href="schwarz-christoffel-heat.html">Second SC problem: steady heat conduction with varying edge temperatures</a></p>
-  <div class="planes">
-    <figure>
-      <figcaption>Source · upper half-plane <small>The plot shows a finite window.</small></figcaption>
+  <section class="example-guide" aria-label="How to explore this example"><h2>How to explore this example</h2><ol><li><strong>Choose P</strong><p>Move P with the source plot or coordinate sliders. The image P′ follows inside the square.</p></li><li><strong>Match the corners</strong><p>Select −1, 0, 1 or ∞. Corner labels name the source prevertex, not the target coordinate.</p></li><li><strong>Switch the model</strong><p>Mapping grid shows corresponding curves. Electrostatics replaces them with equipotentials and electric-field lines; the selected point is preserved.</p></li></ol><p class="guide-limit">The real axis uses boundary limits. Infinity is a boundary prevertex; it is not a finite point that can be dragged in the source window.</p></section><div class="planes">
+    <figure class="interactive-source">
+      <p class="interaction-badge">Move here · click or drag P in the half-plane</p><figcaption>Source · upper half-plane <small>The plot shows a finite window.</small></figcaption>
       <canvas id="source" role="img" aria-label="Upper half-plane with the real boundary, prevertices and the selected point P"></canvas>
     </figure>
-    <figure>
+    <figure><p class="interaction-badge is-result">Linked image · follows the source</p>
       <figcaption>Image · Schwarz–Christoffel square <small>Corner labels give their source prevertices.</small></figcaption>
       <canvas id="image" role="img" aria-label="Square with labeled corners, mapped grid and the selected point P prime"></canvas>
     </figure>
@@ -91,7 +91,7 @@
     <a href="../docs/schwarz-christoffel-square.md">Normalization and validation</a> ·
     <a href="../docs/square-electrostatics.md">Electrostatics notes</a> ·
     <a href="https://dlmf.nist.gov/19.32">NIST DLMF §19.32</a></footer>
-</main>
+<nav class="example-route" aria-label="Example reading route"><a href="index.html">All examples</a><a href="../docs/schwarz-christoffel-square.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
 <script src="sc-square.js"></script>
 <script>
   const byId = (id) => document.getElementById(id);
@@ -355,4 +355,4 @@
   render();
 </script>
 </body>
-</html>
+<script src="example-guide.js"></script></html>
