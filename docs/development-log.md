@@ -3,6 +3,28 @@
 This log records local development, not published package releases.
 Version-control commits remain the authoritative file history.
 
+## 2026-11-19: integrated animated lunar opening and citations
+
+- Integrated the previously separate animated opening as the public home
+  page, retaining the updated gallery and all twelve demonstrations.
+  Globe and square follow the same geographic point using the atlas's
+  existing Peirce implementation and grid. Added pause, manual position,
+  reduced-motion handling and suspension while hidden or outside the view.
+- Published thesis/software citation cards, copy and selection fallback,
+  and six local BibTeX/RIS/CFF download links. Synced the downloadable CFF
+  with the repository metadata, crediting both thesis authors and its
+  director in their respective roles.
+- Replaced prototype portrait copies with resized files downloaded from
+  documented public-domain Commons records. Preserved source and published
+  hashes, credits and processing details in the portrait manifest.
+- Removed prototype URLs and preview labels. Added reviewed landing assets
+  to the manifest without changing the resource policy or loading remote
+  scripts. Extended the builder's asset-type checks and secret-signature
+  scan to citation downloads.
+- Browser validation covers 36 viewport cases, including normal and reduced
+  motion, numerical correspondence, citation copy/fallback and all existing
+  demonstrations. The opening was inspected at desktop and mobile sizes.
+
 ## 2026-11-19: figure interaction, reading guides and source navigation
 
 - Added a shared sources-and-scope page and navigation to learning,

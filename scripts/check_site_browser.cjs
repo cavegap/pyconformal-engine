@@ -14,7 +14,7 @@ child.on('error',error=>{stderr+=error.message;});
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const mime={'.html':'text/html; charset=utf-8','.js':'application/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.jpg':'image/jpeg','.png':'image/png','.json':'application/json'};
 const server=http.createServer((req,res)=>{try{const url=new URL(req.url,'http://localhost'),relative=decodeURIComponent(url.pathname),file=path.resolve(site,'.'+relative+(relative.endsWith('/')?'index.html':''));if(!file.startsWith(site+path.sep))throw Error('Forbidden path');if(!['GET','HEAD'].includes(req.method)){res.writeHead(405);res.end();return;}const body=fs.readFileSync(file);res.writeHead(200,{'Content-Type':mime[path.extname(file)]||'application/octet-stream'});res.end(req.method==='HEAD'?undefined:body);}catch{res.writeHead(404);res.end();}});
-const routeMap={landing:'index.html',gallery:'examples/index.html','sources-doc':'docs/sources-and-scope.html','exercise-doc':'docs/exercises.html',notation:'docs/notation.html'};
+const routeMap={landing:'index.html','landing-reduced':'index.html',gallery:'examples/index.html','sources-doc':'docs/sources-and-scope.html','exercise-doc':'docs/exercises.html',notation:'docs/notation.html'};
 const tests={
 'notation':`check(document.querySelectorAll('math').length>15,'rendered mathematics');check(document.querySelector('mfrac'),'native fractions');`,
 'schwarz-christoffel-square':`check(Math.hypot(...squareMap([0,1]))<1e-12,'SC center');check(document.querySelector('.example-guide ol').children.length===3,'three practical reading steps');check(document.querySelector('.example-route'),'model and reproduction route');for(const input of document.querySelectorAll('input[type="range"]'))check(input.closest('label').querySelector('.control-live'),'visible slider value');document.querySelector('[data-prevertex="inf"]').click();check(byId('point').textContent==='∞','infinite prevertex');byId('electrostatics').click();check(!byId('field-legend').hidden&&!byId('voltage-readout').hidden,'field view explains legend and voltage');check(Math.abs(Number.parseFloat(byId('voltage').textContent)-1)<1e-12,'top corner potential');byId('geometry').click();byId('reset').click();`,
@@ -27,7 +27,54 @@ const tests={
 'lunar-thesis-interactive':`document.querySelector('[data-map="log"]').click();check(document.querySelector('[data-formula-map="log"]').hidden===false,'log formula follows selection');document.querySelector('[data-map="cube"]').click();check(document.querySelector('[data-formula-map="log"]').hidden,'old formula hidden');check(document.querySelector('.example-guide ol').children.length===3,'three practical reading steps');check(document.querySelector('.example-route'),'model and reproduction route');for(const input of document.querySelectorAll('input[type="range"]'))check(input.closest('label').querySelector('.control-live'),'visible slider value');const selected=slider.value;for(const b of maps){b.click();check(slider.value===selected,'map change preserves contour sample');}const c=image.getContext('2d'),fill=c.fillText;let labels=[];c.fillText=function(t,...args){labels.push(t);return fill.call(this,t,...args);};render();c.fillText=fill;check(labels.includes('P′'),'lunar transformed selection labeled');document.querySelector('[data-map="square"]').click();const chosen=data.markers[1],r=source.getBoundingClientRect(),q=sourceView.project(sourceView.boundary[chosen]);source.dispatchEvent(new MouseEvent('click',{clientX:r.left+q[0],clientY:r.top+q[1],bubbles:true}));check(Number(slider.value)===chosen,'lunar click selects reference vertex');marks[0].click();`,
 'gallery':`check(document.querySelector('.site-header a[href="../index.html"]'),'gallery home');check(document.querySelector('a[href="../docs/reproducibility.html"]'),'reproduction route');`,
 'sources-doc':`check(document.querySelector('a[href="https://doi.org/10.18273/revint.v34n1-2016002"]'),'mentor reference');check(document.querySelector('.table-scroll'),'scope comparison');`,
-'landing':`check(document.querySelector('.hero .button[href="examples/peirce-atlas.html"]'),'atlas entry');check(document.querySelector('.hero .button[href="docs/thesis-guide.html"]'),'learning entry');check(document.querySelectorAll('.journeys article').length===3,'three reading routes');check(document.querySelector('.hero img').naturalWidth===880,'lunar hero image');check(document.querySelector('a[href="examples/conformal-angle.html"]'),'featured curves demo');`,
+'landing':`
+const globe=document.getElementById('globe'),square=document.getElementById('square'),button=document.getElementById('motion');
+await new Promise(r=>setTimeout(r,350));
+check(globe.dataset.longitude,'globe rendered');
+check(Number(square.dataset.gridPaths)===55,'projected graticule rendered');
+check(document.querySelector('.meridian-key')&&document.querySelector('.parallel-key'),'grid legend');
+check(document.querySelectorAll('.timeline li').length===3,'historical sequence');
+check(document.querySelector('a[href="https://doi.org/10.2307/2369491"]'),'Peirce primary source');
+check(document.querySelectorAll('header nav a[href="#cite"]').length===1,'exactly one citation navigation link');
+check(document.querySelectorAll('.history-portraits img').length===3,'three historical portraits');
+check(parseFloat(getComputedStyle(document.querySelector('.view p')).fontSize)>=14,'readable view captions');
+check(document.querySelector('.point-key').textContent.includes('P′'),'point image legend');
+check(document.querySelectorAll('.citation-card').length===2,'thesis and software citations');
+let copied='';Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>{copied=value;}}});
+document.querySelector('[data-copy="cite-thesis"]').click();await new Promise(r=>setTimeout(r,20));
+check(copied.includes('Olivero Zapata')&&copied.includes('63225bdb-dfc7-43f3-b22d-156d01277ef2'),'copy thesis and institutional URL');
+check(copied.includes('Thesis director: Juan Pablo Yáñez Puentes.'),'copy includes supervision credit');
+document.querySelector('[data-copy="cite-software"]').click();await new Promise(r=>setTimeout(r,20));
+check(copied.includes('Version 0.1.0a1'),'copy versioned software citation');
+Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{throw Error('unavailable');}}});
+document.querySelector('[data-copy="cite-thesis"]').click();await new Promise(r=>setTimeout(r,20));
+check(getSelection().toString().includes('Olivero Zapata'),'selectable clipboard fallback');getSelection().removeAllRanges();
+document.getElementById('copy-status').textContent='';
+const before=globe.dataset.longitude;
+await new Promise(r=>setTimeout(r,300));check(globe.dataset.longitude!==before,'automatic movement');
+button.click();const frozen=globe.dataset.longitude;
+await new Promise(r=>setTimeout(r,300));check(globe.dataset.longitude===frozen,'pause freezes point');
+const slider=document.getElementById('longitude');slider.value=-35;slider.dispatchEvent(new Event('input'));
+const context=square.getContext('2d'),originalLabel=context.fillText;let labels=[];
+context.fillText=function(text,...args){labels.push(text);return originalLabel.call(this,text,...args);};
+slider.dispatchEvent(new Event('input'));context.fillText=originalLabel;
+check(labels.includes('P′'),'projected canvas draws P prime');
+check(Number(globe.dataset.longitude)===-35,'manual longitude');
+const expected=PeirceMap.project(-35,Number(globe.dataset.latitude));
+check(Math.abs(Number(square.dataset.x)-expected[0])<1e-12&&Math.abs(Number(square.dataset.y)-expected[1])<1e-12,'true Peirce correspondence');
+check(button.getAttribute('aria-pressed')==='true','manual input pauses');
+button.click();check(button.getAttribute('aria-pressed')==='false','resume control');
+
+check(!document.querySelector('a[href*="127.0.0.1"]'),"no preview links");check(document.querySelectorAll("a[download]").length===6,"six citation downloads");`,
+'landing-reduced':`
+const globe=document.getElementById('globe'),button=document.getElementById('motion');
+await new Promise(r=>setTimeout(r,300));check(globe.dataset.longitude,'static globe rendered');
+check(button.getAttribute('aria-pressed')==='true','reduced motion initially paused');
+const before=globe.dataset.longitude;await new Promise(r=>setTimeout(r,300));
+check(globe.dataset.longitude===before,'reduced motion prevents autoplay');
+button.click();await new Promise(r=>setTimeout(r,350));
+check(globe.dataset.longitude!==before,'explicit play works with reduced motion');button.click();
+`,
 'exercise-doc':`check(document.getElementById('e1-vector-angles-and-orientation'),'E1 anchor');check(document.getElementById('e10-audit-the-historical-figure'),'E10 anchor');check(document.querySelector('a[href="exercise-solutions.html"]'),'rendered solutions link');`,
 'group-p':`document.querySelector('[data-thesis="reflection"]').click();check(document.getElementById('axis').value==='30','reflection axis preset');const original=stats(points);document.getElementById('negative').checked=true;render();check(document.getElementById('m3').textContent.includes(original.angle.toFixed(2)),'negative dilation angle');check(document.getElementById('thesis-note').textContent.includes('2\u03b1'),'matrix convention: '+document.getElementById('thesis-note').textContent);document.querySelector('[data-thesis="definition"]').click();check(stats(points).angle!==90,'oblique definition');document.getElementById('reset').click();
 check(document.querySelector('.source-panel'),'distinct interactive source');
@@ -123,10 +170,10 @@ function call(method,params={}){return new Promise((resolve,reject)=>{const n=++
 await call('Page.enable');await call('Runtime.enable');await call('Network.enable');
 await call('Page.addScriptToEvaluateOnNewDocument',{source:"window.__policyEvents=[];addEventListener('securitypolicyviolation',e=>window.__policyEvents.push(e.violatedDirective));"});
 for(const name of Object.keys(tests))for(const width of [1440,430]){
-errors=[];remote=[];await call('Emulation.setDeviceMetricsOverride',{width,height:1100,deviceScaleFactor:1,mobile:false});await call('Page.navigate',{url:new URL(routeMap[name]||'examples/'+name+'.html',base).href});
+await call('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:name==='landing-reduced'?'reduce':'no-preference'}]});errors=[];remote=[];await call('Emulation.setDeviceMetricsOverride',{width,height:1100,deviceScaleFactor:1,mobile:false});await call('Page.navigate',{url:new URL(routeMap[name]||'examples/'+name+'.html',base).href});
 let ready=false;for(let i=0;i<100;i++){const r=await call('Runtime.evaluate',{expression:"document.readyState==='complete' && [...document.images].every(i=>i.complete&&i.naturalWidth>0)",returnByValue:true});if(r.result.value){ready=true;break;}await sleep(100);}if(!ready)throw Error(name+' did not load');await sleep(100);
-const expression=`(()=>{const check=(b,m)=>{if(!b)throw Error(m)};try{${tests[name]}check(document.documentElement.scrollWidth<=innerWidth+1,'horizontal page overflow');check(window.__policyEvents.length===0,'unexpected CSP violation '+window.__policyEvents);for(const m of document.querySelectorAll('math')){if(m.closest('[hidden]'))continue;check(m.getBoundingClientRect().height>0,'invisible mathematics');}return 'passed';}catch(e){return e.stack;}})()`;
-const result=await call('Runtime.evaluate',{expression,returnByValue:true});if(result.result.value!=='passed'||errors.length||remote.length)throw Error(name+' '+width+': '+result.result.value+' '+errors.join(';')+' remote resources '+remote.join(';'));
+const expression=`(async()=>{const check=(b,m)=>{if(!b)throw Error(m)};try{${tests[name]}check(document.documentElement.scrollWidth<=innerWidth+1,'horizontal page overflow');check(window.__policyEvents.length===0,'unexpected CSP violation '+window.__policyEvents);for(const m of document.querySelectorAll('math')){if(m.closest('[hidden]'))continue;check(m.getBoundingClientRect().height>0,'invisible mathematics');}return 'passed';}catch(e){return e.stack;}})()`;
+const result=await call('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(result.result.value!=='passed'||errors.length||remote.length)throw Error(name+' '+width+': '+result.result.value+' '+errors.join(';')+' remote resources '+remote.join(';'));
 if(process.env.SITE_SCREENSHOTS){const dir=path.resolve(process.env.SITE_SCREENSHOTS);fs.mkdirSync(dir,{recursive:true});const metrics=await call('Page.getLayoutMetrics'),height=Math.min(Math.ceil(metrics.cssContentSize.height),5000),shot=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:0,y:0,width,height,scale:1}});fs.writeFileSync(path.join(dir,name+'-'+width+'.png'),Buffer.from(shot.data,'base64'));}
 if(process.env.SITE_SCREENSHOTS){const focus=await call('Runtime.evaluate',{expression:"(()=>{const g=document.querySelector('.example-guide');if(!g)return null;const r=g.getBoundingClientRect();return {y:Math.max(0,r.top+scrollY-8),height:Math.min(1500,document.documentElement.scrollHeight-r.top-scrollY)};})()",returnByValue:true});if(focus.result.value){const {y,height}=focus.result.value,shot=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:0,y,width,height,scale:1}});fs.writeFileSync(path.join(path.resolve(process.env.SITE_SCREENSHOTS),name+'-'+width+'-focus.png'),Buffer.from(shot.data,'base64'));}}
 console.log(name,width,'passed');

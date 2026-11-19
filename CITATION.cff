@@ -8,8 +8,6 @@ authors:
   - family-names: "Vega Penagos"
     given-names: "Cesar A"
     affiliation: "N/A"
-    # email: replace_me@example.com
-    # orcid: "https://orcid.org/0000-0000-0000-0000"
 repository-code: "https://github.com/cavegap/pyconformal-engine"
 url: "https://cavegap.github.io/pyconformal-engine/"
 abstract: >-
@@ -42,6 +40,7 @@ references:
       - family-names: "Olivero Zapata"
         given-names: "Hernán Alirio"
     thesis-type: "Undergraduate thesis"
+    url: "https://repository.ut.edu.co/entities/publication/63225bdb-dfc7-43f3-b22d-156d01277ef2"
     institution:
       name: "Universidad del Tolima"
       address: "Ibagué, Tolima, Colombia"
