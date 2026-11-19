@@ -61,3 +61,30 @@ Keep unresolved questions separate from established results:
 [future work](future-work.md) and the [applications roadmap](applications-roadmap.md)
 describe the next investigations. Candidate research directions remain
 proposals until their assumptions and validation have been reviewed.
+
+
+## Animated opening and citation downloads
+
+The opening follows one geographic location from an orthographic globe to
+Peirce's square. Its grid and projection use the same conventions as the
+atlas. Globe illumination and brightness are presentation choices, not a
+lunar lighting prediction. Motion can be paused; a reduced-motion preference
+starts the view paused. The animation suspends when hidden or out of view.
+
+The [home page](../web/index.html#cite) supplies separate thesis and software
+references, including BibTeX, RIS and CFF downloads. Thesis authorship and
+supervision are credited separately. Downloads are local files and the copy
+buttons require an explicit reader action.
+
+The portraits are resized copies of the exact Wikimedia Commons files
+listed below. Their file records identify them as public domain; credit
+and provenance are retained independently of the software's MIT license.
+
+| Portrait | Source record and credit |
+| --- | --- |
+| Hermann Schwarz | [ETH-Bibliothek, Ludwig Zipfel, circa 1890](https://commons.wikimedia.org/wiki/File:ETH-BIB-Schwarz,_Hermann_Amand_(1843-1921)-Portrait-Portr_11921.jpg) |
+| Elwin Christoffel | [Wikimedia Commons, photographer unspecified](https://commons.wikimedia.org/wiki/File:Elwin_Bruno_Christoffel.JPG) |
+| Charles S. Peirce | [Napoleon Sarony, 1891, New York Public Library / Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Charles_Sanders_Peirce.jpg) |
+
+The [portrait provenance manifest](../web/landing/portraits/sources.json)
+records download URLs, source and published SHA-256 hashes and resizing.

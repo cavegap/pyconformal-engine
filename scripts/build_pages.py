@@ -255,6 +255,8 @@ def public_link(value: str, source: Path, root: Path) -> str:
         target = root / "assets" / relative.name
     if relative == Path("web/index.html"):
         target = root / "index.html"
+    if relative.parts[:2] == ("web", "landing"):
+        target = root / "assets" / relative.relative_to("web")
     if relative.parts and relative.parts[0] in {"src", "tests", ".github"}:
         kind = "tree" if target.is_dir() else "blob"
         return f"{REPOSITORY}/{kind}/main/{relative.as_posix()}"
@@ -446,6 +448,9 @@ def audit_publication(output: Path) -> None:
             ".json",
             ".py",
             ".cff",
+            ".bib",
+            ".ris",
+            ".txt",
         }:
             continue
         text = path.read_text(encoding="utf-8")
@@ -550,6 +555,22 @@ def build(root: Path = ROOT) -> Path:
         for source in sources:
             relative = source.relative_to(root)
             if relative.parts[0] == "web":
+                if relative in {Path("web/index.html"), Path("web/site.css"), Path("web/math.css")}:
+                    continue
+                if relative.parts[:2] != ("web", "landing") or source.suffix not in {
+                    ".css",
+                    ".js",
+                    ".jpg",
+                    ".json",
+                    ".bib",
+                    ".ris",
+                    ".txt",
+                    ".cff",
+                }:
+                    raise ValueError("Unreviewed web asset type or directory.")
+                target = staging / "assets" / relative.relative_to("web")
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, target)
                 continue
             if relative.parts[0] not in {
                 "examples",

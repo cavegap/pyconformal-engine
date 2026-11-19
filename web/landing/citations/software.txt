@@ -1,0 +1,1 @@
+Vega Penagos, C. A. (2026). PyConformal Engine (Version 0.1.0a1) [Computer software and interactive website]. https://cavegap.github.io/pyconformal-engine/

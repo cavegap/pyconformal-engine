@@ -88,3 +88,25 @@ def test_allowlisted_build_excludes_secrets_and_rebuilds(tmp_path: Path) -> None
     (output / "stale.txt").touch()
     assert build(tmp_path) == output
     assert not (output / "stale.txt").exists()
+
+
+def test_landing_assets_publish_only_reviewed_types(tmp_path: Path) -> None:
+    """Keep downloadable citations local and reject executable web assets."""
+    test_allowlisted_build_excludes_secrets_and_rebuilds(tmp_path)
+    landing = tmp_path / "web/landing"
+    landing.mkdir()
+    (landing / "reference.bib").write_text("@misc{map, title={Map}}", encoding="utf-8")
+    manifest = tmp_path / "web/public-assets.json"
+    sources = json.loads(manifest.read_text(encoding="utf-8"))
+    sources.append("web/landing/reference.bib")
+    manifest.write_text(json.dumps(sources), encoding="utf-8")
+    output = build(tmp_path)
+    assert (output / "assets/landing/reference.bib").is_file()
+    assert public_link("../web/landing/reference.bib", tmp_path / "docs/note.md", tmp_path) == (
+        "../assets/landing/reference.bib"
+    )
+    (landing / "program.exe").write_bytes(b"not a public resource")
+    sources.append("web/landing/program.exe")
+    manifest.write_text(json.dumps(sources), encoding="utf-8")
+    with pytest.raises(ValueError, match="Unreviewed web asset"):
+        build(tmp_path)

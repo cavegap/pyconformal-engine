@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Hermann Schwarz",
+    "file": "schwarz.jpg",
+    "creator": "Ludwig Zipfel",
+    "date": "circa 1890",
+    "credit": "ETH-Bibliothek / Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:ETH-BIB-Schwarz,_Hermann_Amand_(1843-1921)-Portrait-Portr_11921.jpg",
+    "download": "https://upload.wikimedia.org/wikipedia/commons/f/f4/ETH-BIB-Schwarz%2C_Hermann_Amand_%281843-1921%29-Portrait-Portr_11921.jpg",
+    "rights": "Public domain, as identified on the linked Wikimedia Commons file record",
+    "retrieved": "2026-11-19",
+    "source_sha256": "8689bd60013f1c089a02cca8ee5958ab39c85985a86f1527e09275dbfd0201a8",
+    "published_sha256": "b5dc1aa5190604ef5d505e1832e884bf2355499cc44196c671811caf76312733",
+    "processing": "Resized JPEG; no content retouching"
+  },
+  {
+    "name": "Elwin Christoffel",
+    "file": "christoffel.jpg",
+    "creator": "Unknown photographer",
+    "date": "Not specified in source record",
+    "credit": "Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Elwin_Bruno_Christoffel.JPG",
+    "download": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Elwin_Bruno_Christoffel.JPG",
+    "rights": "Public domain, as identified on the linked Wikimedia Commons file record",
+    "retrieved": "2026-11-19",
+    "source_sha256": "45f9cc10e708f72118ceac64ea21f02ac7e6537fb4bf94d5f1ce2b973c81a06c",
+    "published_sha256": "43d6dc0bcd36f650168bf638d530ac792e747b69454804fef1dec2fadfedf5bd",
+    "processing": "Resized JPEG; no content retouching"
+  },
+  {
+    "name": "Charles S. Peirce",
+    "file": "peirce.jpg",
+    "creator": "Napoleon Sarony",
+    "date": "1891",
+    "credit": "New York Public Library / Wikimedia Commons",
+    "source": "https://commons.wikimedia.org/wiki/File:Charles_Sanders_Peirce.jpg",
+    "download": "https://upload.wikimedia.org/wikipedia/commons/5/58/Charles_Sanders_Peirce.jpg",
+    "rights": "Public domain, as identified on the linked Wikimedia Commons file record",
+    "retrieved": "2026-11-19",
+    "source_sha256": "97424aec37121c005e3ef994d782921b25f0c1d6b622efde6a4bc870940f8fbc",
+    "published_sha256": "a84f4f13734ff65fd1b550593965a8333a4735a2c2ccc9fda6963c35fcf716e5",
+    "processing": "Resized JPEG; no content retouching"
+  }
+]

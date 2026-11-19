@@ -17,8 +17,9 @@ python scripts/build_pages.py
 python -m http.server 8000 --bind 127.0.0.1 --directory site
 ```
 
-Open `http://localhost:8000`. The output can also be opened offline at
-`site/index.html`. The builder validates local files and HTML fragments
+Open `http://localhost:8000`. The complete download can be used offline with the loopback server above.
+Serve `site/index.html` over local HTTP so the animated globe can read its
+local image pixels under the browser's same-origin rules. The builder validates local files and HTML fragments
 before replacing an older generated build. It refuses to replace a
 `site/` directory without its generated-build marker.
 

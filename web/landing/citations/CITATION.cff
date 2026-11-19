@@ -1,0 +1,53 @@
+cff-version: 1.2.0
+title: "PyConformal Engine"
+message: >-
+  If you use this software, please cite both the software itself
+  and the underlying thesis listed in the `references` field.
+type: software
+authors:
+  - family-names: "Vega Penagos"
+    given-names: "Cesar A"
+    affiliation: "N/A"
+repository-code: "https://github.com/cavegap/pyconformal-engine"
+url: "https://cavegap.github.io/pyconformal-engine/"
+abstract: >-
+  PyConformal Engine is a Python library for conformal mappings,
+  implementing the mathematical content of the undergraduate thesis
+  "Implementación en software de aplicaciones conformes" (Vega Penagos
+  & Olivero Zapata, Universidad del Tolima, 2015) as a numerical,
+  open-source continuation of the original Maple 17 implementation.
+  This research preview provides angle-preserving linear maps (group P),
+  the Cayley and exponential maps, a fixed-prevertex Schwarz-Christoffel
+  square, ideal electrostatic and thermal examples, and spherical Peirce
+  cartography. Interactive examples and reader exercises accompany the
+  thesis. General polygon mappings remain future work.
+keywords:
+  - conformal mapping
+  - complex analysis
+  - Schwarz-Christoffel
+  - Möbius transformation
+  - scientific computing
+  - cartographic projection
+license: MIT
+version: "0.1.0a1"
+date-released: "2026-11-18"
+references:
+  - type: thesis
+    title: "Implementación en software de aplicaciones conformes"
+    authors:
+      - family-names: "Vega Penagos"
+        given-names: "Cesar Augusto"
+      - family-names: "Olivero Zapata"
+        given-names: "Hernán Alirio"
+    thesis-type: "Undergraduate thesis"
+    url: "https://repository.ut.edu.co/entities/publication/63225bdb-dfc7-43f3-b22d-156d01277ef2"
+    institution:
+      name: "Universidad del Tolima"
+      address: "Ibagué, Tolima, Colombia"
+      department: "Facultad de Ciencias — Programa de Matemáticas con énfasis en Estadística"
+    year: 2015
+    month: 12
+    notes: >-
+      Director: Mg. Juan Pablo Yáñez Puentes.
+      Jurados: Dr. Arnold Oostra Van Noppen, Dr. Leonardo Solanilla Chavarro.
+      Calificación: 4.8 (Meritorio). Sustentación: 17 de diciembre de 2015.
