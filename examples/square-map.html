@@ -33,7 +33,7 @@
     @media (max-width: 640px) { .plots { grid-template-columns: 1fr; } }
   </style>
 <link rel="stylesheet" href="../web/math.css">
-</head>
+<link rel="stylesheet" href="example-guide.css"></head>
 <body>
 <main>
   <header>
@@ -44,12 +44,12 @@
   </header>
 <section class="formula-panel"><h2>Square map and critical point</h2><div class="math-display" data-tex="f(z)=z^2,\qquad f^{\prime}(z)=2z,\qquad |f^{\prime}(z)|=2|z|">f(z) = z²; f′(z) = 2z; local length scale = 2|z|</div><p>Local angles are preserved for z ≠ 0. At the origin the first derivative vanishes; outgoing directions are governed by the quadratic term.</p><p class="notation-link"><a href="../docs/notation.md">Notation, domains and normalization</a></p></section>
   <p><a href="object-reveal.html">New object example · a logarithm reveals a house</a> · <a href="group-p.html">Move the rays in Group P</a></p>
-  <div class="plots">
-    <figure>
-      <figcaption>Source · <i>z</i>-plane</figcaption>
+  <section class="example-guide" aria-label="How to explore this example"><h2>How to explore this example</h2><ol><li><strong>Move P</strong><p>Click or drag in the highlighted source, or use Re P and Im P. P′ is its image under z².</p></li><li><strong>Read the colors</strong><p>The two colored UT outlines correspond across both panels. The short rays show local directions; θ is the source opening and θ′ the image opening.</p></li><li><strong>Try the origin</strong><p>Move P to zero. The opening doubles there as a limit of outgoing rays; it is not a nonzero image derivative.</p></li></ol><p class="guide-limit">The two plots have different coordinate scales. Compare the numerical |2z|, not the screen lengths of the rays.</p></section><div class="plots">
+    <figure class="interactive-source">
+      <p class="interaction-badge">Move here · click or drag P</p><figcaption>Source · <i>z</i>-plane</figcaption>
       <canvas id="source" role="img" aria-label="Source grid, Universidad del Tolima outline, and directions at P"></canvas>
     </figure>
-    <figure>
+    <figure><p class="interaction-badge is-result">Linked image · follows the source</p>
       <figcaption>Image · <i>w</i>-plane</figcaption>
       <canvas id="image" role="img" aria-label="Mapped grid, transformed university outline, and directions at P prime"></canvas>
     </figure>
@@ -70,7 +70,7 @@
   <p id="explanation" aria-live="polite"></p>
   <footer>Universidad del Tolima outline adapted from <code>logo_UT.py</code>.
     Square-map example from Vega Penagos &amp; Olivero Zapata (2015), §3.1, Theorem 10.</footer>
-</main>
+<nav class="example-route" aria-label="Example reading route"><a href="index.html">All examples</a><a href="../docs/thesis-guide.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
 <script>
   const byId = (id) => document.getElementById(id);
   const source = byId("source");
@@ -160,6 +160,12 @@
     path([point, at(heading + opening, rayLength)], "#087267", 2.5);
     const arc = Array.from({ length: 26 }, (_, i) => at(heading + opening * i / 25, rayLength * .45));
     path(arc, "#192c35", 1.4);
+    const labelDirection = heading + opening / 2;
+    const labelRadius = rayLength * .45 + 19 / unit;
+    const [ax, ay] = project(at(labelDirection, labelRadius));
+    ctx.font = "bold 15px system-ui"; ctx.strokeStyle = "white"; ctx.lineWidth = 5;
+    const angleLabel = label === "P" ? "θ" : "θ′";
+    ctx.strokeText(angleLabel, ax, ay); ctx.fillStyle = "#67408d"; ctx.fillText(angleLabel, ax, ay);
     const [px, py] = project(point);
     ctx.beginPath();
     ctx.arc(px, py, 4.5, 0, 2 * Math.PI);
@@ -233,4 +239,4 @@
   render();
 </script>
 </body>
-</html>
+<script src="example-guide.js"></script></html>

@@ -38,7 +38,7 @@
     @media (max-width: 560px) { canvas { aspect-ratio: 1.6; } }
   </style>
 <link rel="stylesheet" href="../web/math.css">
-</head>
+<link rel="stylesheet" href="example-guide.css"></head>
 <body>
 <main>
   <header>
@@ -65,7 +65,7 @@
     <div><dt>Propagation velocity</dt><dd id="velocity"></dd></div>
   </dl>
   <p id="status" aria-live="polite"></p>
-  <figure>
+  <section class="example-guide" aria-label="How to explore this example"><h2>How to explore this example</h2><ol><li><strong>Edit dimensions</strong><p>Change width w, gap s per side, or relative permittivity. The drawing updates from these fields; its conductors are not draggable.</p></li><li><strong>Try 50 Ω</strong><p>Find 50 Ω gap adjusts s within the allowed range using the current width and dielectric. Then change permittivity to compare impedance.</p></li><li><strong>Read the colors</strong><p>The red signal strip is at 1 V; the blue grounds are at 0 V. Green curves and arrowheads show field direction.</p></li></ol><p class="guide-limit">The drawn density is illustrative. This is a uniform-dielectric, zero-thickness, ideal model; an actual PCB requires its stack-up and loss model.</p></section><figure><p class="interaction-badge is-result">Model output · edit the parameter fields</p>
     <figcaption>Cross-section and electric field lines</figcaption>
     <div class="diagram-key">
       <span><i class="swatch drive" aria-hidden="true"></i> Signal · 1 V</span>
@@ -78,7 +78,7 @@
   </figure>
   <footer>Ideal quasi-TEM model with a uniform dielectric above and below, zero conductor thickness, infinite lateral grounds and no backside metal.
     <a href="../docs/coplanar-waveguide.md">Model and verification</a></footer>
-</main>
+<nav class="example-route" aria-label="Example reading route"><a href="index.html">All examples</a><a href="../docs/coplanar-waveguide.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
 <script>
   const byId = (id) => document.getElementById(id);
   const widthInput = byId("width");
@@ -276,4 +276,4 @@
   render();
 </script>
 </body>
-</html>
+<script src="example-guide.js"></script></html>

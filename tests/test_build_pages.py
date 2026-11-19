@@ -57,7 +57,13 @@ def test_allowlisted_build_excludes_secrets_and_rebuilds(tmp_path: Path) -> None
     (tmp_path / "docs").mkdir()
     (tmp_path / "docs/guide.md").write_text("# Exercise\n\nA reader task.", encoding="utf-8")
     # The generated document template links to these curated destinations.
-    for relative in ("examples/index.html", "docs/thesis-guide.md", "docs/exercises.md"):
+    for relative in (
+        "examples/index.html",
+        "docs/thesis-guide.md",
+        "docs/exercises.md",
+        "docs/reproducibility.md",
+        "docs/sources-and-scope.md",
+    ):
         (tmp_path / relative).write_text("# Notes", encoding="utf-8")
     (tmp_path / "thesis").mkdir()
     manifest = [
@@ -68,6 +74,8 @@ def test_allowlisted_build_excludes_secrets_and_rebuilds(tmp_path: Path) -> None
         "docs/guide.md",
         "docs/thesis-guide.md",
         "docs/exercises.md",
+        "docs/reproducibility.md",
+        "docs/sources-and-scope.md",
     ]
     (tmp_path / "docs/notation.md").write_text("# Notation", encoding="utf-8")
     manifest.append("docs/notation.md")

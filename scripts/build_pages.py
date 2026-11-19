@@ -36,7 +36,8 @@ POLICY = (
 def mathml(tex: str, display: bool = False) -> str:
     """Render bounded author-supplied TeX as validated, inert native MathML."""
     if len(tex) > 3000 or re.search(
-        r"\\(?:href|url|html\w*|include\w*|input|require|def|newcommand|style|class)\b", tex
+        r"\\(?:href|url|html\w*|include\w*|input|require|def|newcommand|style|class)\b",
+        tex,
     ):
         raise ValueError("Unsupported or oversized formula.")
     rendered = convert(tex, display="block" if display else "inline")
@@ -184,7 +185,10 @@ def render_html_math(content: str) -> str:
         return f"<{match[1]}{match[2]}>{rendered}</{match[1]}>"
 
     return re.sub(
-        r'<(span|div)([^>]*\bdata-tex="([^"]+)"[^>]*)>.*?</\1>', replace, content, flags=re.DOTALL
+        r'<(span|div)([^>]*\bdata-tex="([^"]+)"[^>]*)>.*?</\1>',
+        replace,
+        content,
+        flags=re.DOTALL,
     )
 
 
@@ -217,7 +221,10 @@ def harden_page(content: str, path: Path, output: Path) -> str:
         )
 
     content = re.sub(
-        r"<(script|style)([^>]*)>(.*?)</\1>", externalize, content, flags=re.DOTALL | re.IGNORECASE
+        r"<(script|style)([^>]*)>(.*?)</\1>",
+        externalize,
+        content,
+        flags=re.DOTALL | re.IGNORECASE,
     )
     if not re.search(r"<html[\s>]", content, re.IGNORECASE):
         content = "<!doctype html><html><head></head><body>" + content + "</body></html>"
@@ -244,8 +251,10 @@ def public_link(value: str, source: Path, root: Path) -> str:
     if not target.is_relative_to(root):
         raise ValueError(f"Link escapes repository: {source.name}: {value}")
     relative = target.relative_to(root)
-    if relative == Path("web/math.css"):
-        target = root / "assets/math.css"
+    if relative in {Path("web/math.css"), Path("web/site.css")}:
+        target = root / "assets" / relative.name
+    if relative == Path("web/index.html"):
+        target = root / "index.html"
     if relative.parts and relative.parts[0] in {"src", "tests", ".github"}:
         kind = "tree" if target.is_dir() else "blob"
         return f"{REPOSITORY}/{kind}/main/{relative.as_posix()}"
@@ -333,7 +342,8 @@ def document(content: str, source: Path, root: Path) -> str:
         "</table>", "</table></div>"
     )
     title = next(
-        (line.lstrip("# ") for line in content.splitlines() if line.startswith("# ")), source.stem
+        (line.lstrip("# ") for line in content.splitlines() if line.startswith("# ")),
+        source.stem,
     )
     prefix = posixpath.relpath(root.as_posix(), source.parent.as_posix())
 
@@ -345,7 +355,7 @@ def document(content: str, source: Path, root: Path) -> str:
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)} | PyConformal Engine</title><link rel="stylesheet" href="{root_link("assets/site.css")}"><link rel="stylesheet" href="{root_link("assets/math.css")}"></head>
 <body><header class="site-header"><a class="brand" href="{root_link("index.html")}">PyConformal Engine</a>
-<nav aria-label="Main"><a href="{root_link("examples/index.html")}">Gallery</a><a href="{root_link("docs/thesis-guide.html")}">Thesis companion</a><a href="{root_link("docs/exercises.html")}">Exercises</a><a href="{root_link("docs/notation.html")}">Notation</a><a href="{REPOSITORY}">GitHub</a></nav></header>
+<nav aria-label="Main"><a href="{root_link("examples/index.html")}">Gallery</a><a href="{root_link("docs/thesis-guide.html")}">Learn</a><a href="{root_link("docs/reproducibility.html")}">Reproduce</a><a href="{root_link("docs/sources-and-scope.html")}">Sources and scope</a><a href="{REPOSITORY}">GitHub</a></nav></header>
 <main class="document"><p class="breadcrumb"><a href="{root_link("index.html")}">Home</a> / Companion</p>
 {body}
 <p class="source-link"><a href="{source_url}">Read this page in the repository</a></p></main>
@@ -561,17 +571,20 @@ def build(root: Path = ROOT) -> Path:
             if source.suffix == ".md":
                 target = target.with_suffix(".html")
                 target.write_text(
-                    document(source.read_text(encoding="utf-8"), source, root), encoding="utf-8"
+                    document(source.read_text(encoding="utf-8"), source, root),
+                    encoding="utf-8",
                 )
             elif source.suffix == ".html":
                 target.write_text(
-                    rewrite(source.read_text(encoding="utf-8"), source, root), encoding="utf-8"
+                    rewrite(source.read_text(encoding="utf-8"), source, root),
+                    encoding="utf-8",
                 )
             else:
                 shutil.copy2(source, target)
         for page in staging.rglob("*.html"):
             page.write_text(
-                harden_page(page.read_text(encoding="utf-8"), page, staging), encoding="utf-8"
+                harden_page(page.read_text(encoding="utf-8"), page, staging),
+                encoding="utf-8",
             )
         audit_publication(staging)
         (staging / ".nojekyll").touch()

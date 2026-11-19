@@ -32,7 +32,7 @@
     @media (max-width: 620px) { .planes { grid-template-columns: 1fr; } }
   </style>
 <link rel="stylesheet" href="../web/math.css">
-</head>
+<link rel="stylesheet" href="example-guide.css"></head>
 <body>
 <main>
   <header>
@@ -43,12 +43,12 @@
   </header>
 <section class="formula-panel"><h2>Cayley map</h2><div class="math-display" data-tex="f(z)=i\frac{1-z}{1+z},\qquad f^{\prime}(z)=\frac{-2i}{(1+z)^2}">f(z) = i(1 − z)/(1 + z); f′(z) = −2i/(1 + z)²</div><div class="math-display" data-tex="\operatorname{Im}f(z)=\frac{1-|z|^2}{|1+z|^2}&gt;0\quad (|z|&lt;1)">Im f(z) = (1 − |z|²)/|1 + z|² &gt; 0 for |z| &lt; 1</div><p>The open disk maps to the upper half-plane. The boundary point −1 is a pole, so its image is interpreted on the extended complex plane.</p><p class="notation-link"><a href="../docs/notation.md">Notation, domains and normalization</a></p></section>
   <details><summary>Formula and reference points</summary><p>w = i(1 − z)/(1 + z), with Im w = (1 − |z|²)/|1 + z|². Thus the open unit disk maps into the upper half-plane. Reference points: 0 → i, i → 1, −i → −1, 1 → 0; −1 is the pole. Compare an interior point, a boundary point and the pole with the controls below.</p></details>
-  <div class="planes">
-    <figure>
-      <figcaption>Source · unit disk</figcaption>
+  <section class="example-guide" aria-label="How to explore this example"><h2>How to explore this example</h2><ol><li><strong>Choose a point</strong><p>Click or drag in the disk. Radius and direction give an alternative way to move P.</p></li><li><strong>Follow P → P′</strong><p>Interior points go above the real axis. Use Move to boundary to see boundary points map onto that axis.</p></li><li><strong>Try the pole</strong><p>Move to pole sends P to −1. Its image is infinity, so there is no finite image marker.</p></li></ol><p class="guide-limit">Near the pole, P′ may lie beyond the plotted window. The location message distinguishes an off-screen finite point from infinity.</p></section><div class="planes">
+    <figure class="interactive-source">
+      <p class="interaction-badge">Move here · click or drag P inside the disk</p><figcaption>Source · unit disk</figcaption>
       <canvas id="disk" role="img" aria-label="Disk with polar grid, point P, and pole at minus one"></canvas>
     </figure>
-    <figure>
+    <figure><p class="interaction-badge is-result">Linked image · follows the source</p>
       <figcaption>Image · upper half-plane</figcaption>
       <canvas id="half-plane" role="img" aria-label="Upper half-plane with mapped grid and image point P prime when visible"></canvas>
     </figure>
@@ -68,7 +68,7 @@
   <p id="location" aria-live="polite"></p>
   <footer>Vega Penagos &amp; Olivero Zapata (2015), §3.2, Example 1, Fig. 3.6.
     Original Maple worksheet <code>disco.mw</code>.</footer>
-</main>
+<nav class="example-route" aria-label="Example reading route"><a href="index.html">All examples</a><a href="../docs/thesis-guide.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
 <script>
   const byId = (id) => document.getElementById(id);
   const disk = byId("disk");
@@ -230,4 +230,4 @@
   render();
 </script>
 </body>
-</html>
+<script src="example-guide.js"></script></html>

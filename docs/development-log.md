@@ -3,6 +3,26 @@
 This log records local development, not published package releases.
 Version-control commits remain the authoritative file history.
 
+## 2026-11-19: figure interaction, reading guides and source navigation
+
+- Added a shared sources-and-scope page and navigation to learning,
+  reproduction and attribution. Distinguished historical reconstructions,
+  software extensions and research proposals without asserting new results.
+- Improved Group P handle selection, dragging, keyboard controls, diagram
+  framing and the separation of the vertex O from the angle label.
+- Clarified the curved-tangent view with dashed supports, directed arrows,
+  signed source/image openings and a controllable local neighborhood.
+- Reviewed all twelve interactive demonstrations. Added practical reading
+  steps, source/result labels, visible slider values and routes to the
+  model, reproduction commands and sources. Kept labels within plot bounds.
+- Local validation passed: 329 Python tests, 38 reader checkpoints, Ruff,
+  MyPy and the browser/Python numerical comparisons. The site built 45 pages
+  with 742 valid local links and fragments. All 34 browser viewport cases
+  and the inline-execution/outbound-connection policy probes passed.
+- The separate animated landing-page prototype remains an integration
+  proposal. Physical validation, learning outcomes and the research
+  stability study are outside this presentation update.
+
 ## 2026-11-18: scientific notation and static-site hardening
 
 - Added a notation guide and native MathML generated from TeX at build

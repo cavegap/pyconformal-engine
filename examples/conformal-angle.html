@@ -3,28 +3,78 @@
 <title>Curves, tangents and conformality | PyConformal Engine</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f3f7f6;color:#17374a;font:16px/1.5 system-ui}main{max-width:1200px;margin:auto;padding:28px}h1{font:500 clamp(32px,5vw,58px) Georgia}a{color:#14645b}.controls{display:flex;gap:16px;flex-wrap:wrap;margin:18px 0}label{display:grid;flex:1 1 160px}select,button{font:inherit;padding:7px;background:white;border:1px solid #83a69c;border-radius:6px}input{accent-color:#14645b;min-width:0}.planes{display:grid;grid-template-columns:1fr 1fr;gap:16px}figure{margin:0;background:white;border:1px solid #cadbd6;border-radius:12px;padding:12px}canvas{width:100%;aspect-ratio:1;display:block}figcaption{font-weight:bold}output{display:block;padding:12px 0;font:15px/1.7 ui-monospace,monospace}small{color:#406362}@media(max-width:700px){.planes{grid-template-columns:1fr}}
-</style><link rel="stylesheet" href="../web/math.css">
+.tangent-key{display:flex;flex-wrap:wrap;gap:12px 24px;padding:13px 16px;background:#e4efeb;border:1px solid #b5cfc4;border-radius:6px;margin:18px 0}.tangent-key span{display:flex;align-items:center;gap:8px}.tangent-key i{width:25px;border-top:3px solid #6b8581}.tangent-key .support{border-top:2px dashed #17374a}.tangent-key .vector{border-color:#17374a}.neighborhood-help{font-size:14px;color:#406362}#tangent-values{font:14px/1.7 ui-monospace,monospace;overflow-wrap:anywhere}.angle-measure{display:block;padding:10px 12px;border:1px solid #c7afd6;background:#f4eef8;border-radius:6px;color:#572776;font:bold 14px/1.5 system-ui}.tangent-key .angle-sector{width:18px;height:14px;border:2px solid #66348c;border-radius:0 100% 0 0;background:#9256b52b}</style><link rel="stylesheet" href="example-guide.css"><link rel="stylesheet" href="../web/math.css">
 </head><body><main>
 <a href="index.html">PyConformal Engine</a> · <a href="group-p.html">Group P</a><h1>From vector angles to curved paths</h1>
-<section class="formula-panel"><h2>Tangent images and local scale</h2><div class="math-display" data-tex="T_j=z_j^{\prime}(0),\qquad T_j^{\ast}=f^{\prime}(z_0)T_j">Tj = z′j(0); the image tangent is f′(z0) Tj</div><div class="math-display" data-tex="\gamma_j=\arg f^{\prime}(z_0)+\beta_j,\qquad \gamma_2-\gamma_1=\beta_2-\beta_1">Both tangent arguments receive the same rotation, so their oriented difference is preserved</div><p>The displayed rotation is defined modulo a full turn. The image tangent opening requires f′(z₀) ≠ 0. The scale is the modulus of the derivative.</p><p class="notation-link"><a href="../docs/notation.md">Notation, domains and normalization</a></p></section>
+<section class="formula-panel"><h2>Tangent images and local scale</h2><div class="math-display" data-tex="T_j=z_j^{\prime}(0),\qquad T_j^{\ast}=f^{\prime}(z_0)T_j">Tj = z′j(0); the image tangent is f′(z0) Tj</div><div class="math-display" data-tex="\gamma_j=\operatorname{Arg} f^{\prime}(z_0)+\beta_j,\qquad \gamma_2-\gamma_1=\beta_2-\beta_1">Both tangent arguments receive the same rotation, so their oriented difference is preserved</div><p>The displayed rotation is defined modulo a full turn. The image tangent opening requires f′(z₀) ≠ 0. The scale is the modulus of the derivative.</p><p class="notation-link"><a href="../docs/notation.md">Notation, domains and normalization</a></p></section>
 <p>Reconstruct the argument of thesis Figure 3.2: C₁ and C₂ meet at z₀, with tangents T₁ and T₂. Their images K₁ and K₂ meet at w₀ = f(z₀), with T*ⱼ = f′(z₀)Tⱼ.</p>
-<div class="controls"><label>Map <select id="map"><option value="square">w = z²</option><option value="exp">w = exp z</option><option value="rotation">w = exp(iπ/3)z</option></select></label><label>Re z₀ <input id="real" type="range" min="-.8" max=".8" step=".01" value=".45"></label><label>Im z₀ <input id="imag" type="range" min="-.8" max=".8" step=".01" value=".3"></label><label>Opening θ <input id="opening" type="range" min="15" max="120" value="65"></label><button id="critical">Move z₀ to zero</button><button id="reset">Reset</button></div>
-<div class="planes"><figure><figcaption>Source · C₁, C₂ and their tangent vectors</figcaption><canvas id="source" aria-label="Two curved paths crossing at z zero with tangent arrows"></canvas></figure><figure><figcaption>Image · K₁, K₂ and their tangent images</figcaption><canvas id="image" aria-label="Mapped curves and tangent vectors at w zero"></canvas></figure></div>
-<output id="readout" aria-live="polite"></output><p id="status"></p>
-<p><small>Each panel uses equal units on its horizontal and vertical axes. Viewports fit the curves independently; use |f′| to compare local length factors.</small></p><p><strong>Formula:</strong> γⱼ = Arg f′(z₀) + βⱼ, hence γ₂ − γ₁ = β₂ − β₁ when f′(z₀) ≠ 0. The arrows show tangent directions; curve chords at finite distances need not preserve angles.</p>
-<details><summary>Construction and source</summary><p>Cⱼ(t) = z₀ + tTⱼ + ibⱼt²Tⱼ, −0.6 ≤ t ≤ 0.6, with β₁ = 25°, β₂ = 25° + θ, b₁ = 0.7 and b₂ = −0.5. These explicit curves are a new schematic reconstruction; no coordinates are extracted from the original drawing. The derivative gives their exact tangent vectors at t = 0.</p><p>Vega Penagos &amp; Olivero Zapata (2015), §1.2 Definition 1 (p. 12), §3.1 Figures 3.1–3.2 (pp. 29, 31), Theorem 9 (p. 30), Theorem 10 (pp. 30–32).</p></details>
+<div class="controls"><label>Map <select id="map"><option value="square">w = z²</option><option value="exp">w = exp z</option><option value="rotation">w = exp(iπ/3)z</option></select></label><label>Re z₀ <input id="real" type="range" min="-.8" max=".8" step=".01" value=".45"></label><label>Im z₀ <input id="imag" type="range" min="-.8" max=".8" step=".01" value=".3"></label><label>Signed opening θ <input id="opening" type="range" min="-150" max="150" value="65" step="1"></label><label><span>Neighborhood h = <span id="neighborhood-value">0.20</span></span><input id="neighborhood" type="range" min=".03" max=".6" step=".01" value=".2"></label><button id="critical">Move z₀ to zero</button><button id="reset">Reset</button></div>
+<p class="neighborhood-help">Angles are measured from tangent 1 to tangent 2: positive is counterclockwise, negative is clockwise. θ belongs to the source; θ′ belongs to the image. Reduce h to inspect tangency near the intersection.</p><div class="tangent-key" aria-label="Curve and tangent legend"><span><i></i>Solid curves: C₁, C₂ → K₁, K₂</span><span><i class="support"></i>Dashed straight lines: tangent supports</span><span><i class="vector"></i>Bold arrows: oriented tangent directions</span><span><i class="angle-sector"></i>Purple sectors: θ → θ′, with direction</span></div><div class="planes"><figure><figcaption>Source · C₁, C₂ and their tangent vectors</figcaption><canvas id="source" aria-label="Source curves and oriented angle theta at z zero"></canvas><output class="angle-measure" id="source-angle"></output></figure><figure><figcaption>Image · K₁, K₂ and their tangent images</figcaption><canvas id="image" aria-label="Image curves and oriented angle theta prime at w zero"></canvas><output class="angle-measure" id="image-angle"></output></figure></div>
+<output id="readout" aria-live="polite"></output><p id="tangent-values"></p><p id="status"></p>
+<p><small>Each panel uses equal units on its horizontal and vertical axes. Viewports fit each neighborhood independently. Arrows are normalized to show direction clearly; their screen lengths do not encode |f′|. The numerical tangent components report the actual derivatives.</small></p><p><strong>Formula:</strong> γⱼ = Arg f′(z₀) + βⱼ, hence γ₂ − γ₁ = β₂ − β₁ when f′(z₀) ≠ 0. The arrows show tangent directions; curve chords at finite distances need not preserve angles.</p>
+<details><summary>Construction and source</summary><p>Cⱼ(t) = z₀ + tTⱼ + ibⱼt²Tⱼ, −h ≤ t ≤ h, with h set by the neighborhood control, with β₁ = 25°, β₂ = 25° + θ, b₁ = 0.7 and b₂ = −0.5. These explicit curves are a new schematic reconstruction; no coordinates are extracted from the original drawing. The derivative gives their exact tangent vectors at t = 0.</p><p>Vega Penagos &amp; Olivero Zapata (2015), §1.2 Definition 1 (p. 12), §3.1 Figures 3.1–3.2 (pp. 29, 31), Theorem 9 (p. 30), Theorem 10 (pp. 30–32).</p></details>
 <p><a href="../docs/thesis-guide.md">Thesis companion</a> · <a href="../docs/exercises.md#e2-curves-tangents-and-a-critical-point">Exercise E2</a></p>
 </main><script src="plot-panel.js"></script><script>
 const byId=id=>document.getElementById(id),multiply=([a,b],[c,d])=>[a*c-b*d,a*d+b*c];
 const maps={square:{f:([x,y])=>[x*x-y*y,2*x*y],df:([x,y])=>[2*x,2*y]},exp:{f:([x,y])=>[Math.exp(x)*Math.cos(y),Math.exp(x)*Math.sin(y)],df:([x,y])=>[Math.exp(x)*Math.cos(y),Math.exp(x)*Math.sin(y)]},rotation:{f:z=>multiply(z,[.5,Math.sqrt(3)/2]),df:()=>[.5,Math.sqrt(3)/2]}};
+function curvePoint(z,T,j,t){const q=multiply([t,(j?-.5:.7)*t*t],T);return [z[0]+q[0],z[1]+q[1]];}
 let lastState;
-function render(){const z=[Number(byId('real').value),Number(byId('imag').value)],opening=Number(byId('opening').value),map=maps[byId('map').value],w=map.f(z),derivative=map.df(z),scale=Math.hypot(...derivative),tangents=[25,25+opening].map(a=>[Math.cos(a*Math.PI/180),Math.sin(a*Math.PI/180)]),curves=tangents.map((T,j)=>Array.from({length:161},(_,i)=>{const t=-.6+1.2*i/160,q=multiply([t,(j?-.5:.7)*t*t],T);return [z[0]+q[0],z[1]+q[1]];})),mapped=curves.map(c=>c.map(map.f)),imageTangents=tangents.map(t=>multiply(derivative,t));
-const fit=(paths,center,ts,ordinary)=>{const p=paths.flat().concat([[0,0]]);if(ordinary)for(const t of ts){const n=Math.hypot(...t);p.push([center[0]+.6*t[0]/n,center[1]+.6*t[1]/n]);}const xs=p.map(q=>q[0]),ys=p.map(q=>q[1]),l=Math.min(...xs),r=Math.max(...xs),b=Math.min(...ys),t=Math.max(...ys),span=Math.max(r-l,t-b)+.5;return [(l+r-span)/2,(l+r+span)/2,(b+t-span)/2,(b+t+span)/2];};
-const sourceExtent=fit(curves,z,tangents,true),targetExtent=fit(mapped,w,imageTangents,scale>1e-12);
-for(const [j,id] of ['source','image'].entries()){const panel=plotPanel(byId(id),j?targetExtent:sourceExtent);panel.grid();const center=j?w:z,paths=j?mapped:curves,ts=j?imageTangents:tangents;paths.forEach((c,k)=>{const color=k?'#215fa1':'#c04b2e';panel.line(c,color,2.5);panel.label((j?'K':'C')+(k+1),c[151],k?-18:14,k?-25:22,color);if(!j||scale>1e-12){const v=ts[k],norm=Math.hypot(...v),end=[center[0]+.6*v[0]/norm,center[1]+.6*v[1]/norm];panel.arrow(center,end,color);panel.label('T'+(k+1)+(j?'*':''),end,8,k?12:-15,color);}});if(!j||scale>1e-12){const a=Math.atan2(ts[0][1],ts[0][0]),b=Math.atan2(ts[1][1],ts[1][0]),q=panel.project(center);panel.ctx.beginPath();panel.ctx.arc(q[0],q[1],24,-a,-b,true);panel.ctx.strokeStyle='#725487';panel.ctx.lineWidth=2;panel.ctx.stroke();const middle=(a+(opening*Math.PI/180)/2),labelPoint=[center[0]+34/panel.unit*Math.cos(middle),center[1]+34/panel.unit*Math.sin(middle)];panel.label('θ',labelPoint,4,-3,'#725487');}panel.dot(center,j?'w₀':'z₀');}
-const angle=v=>Math.atan2(v[1],v[0])*180/Math.PI,turn=angle(derivative),imageOpening=scale>1e-12?((angle(imageTangents[1])-angle(imageTangents[0])+540)%360-180):null;
-lastState={z,w,scale,opening,imageOpening,derivative};byId('readout').textContent=`z₀ = (${z.map(v=>v.toFixed(3)).join(', ')}) → w₀ = (${w.map(v=>v.toFixed(3)).join(', ')}) · θ = ${opening.toFixed(2)}° · image tangent angle = ${imageOpening===null?'undefined':imageOpening.toFixed(2)+'°'} · |f′(z₀)| = ${scale.toFixed(4)} · tangent rotation = ${scale<1e-12?'undefined':turn.toFixed(2)+'°'}`;
-byId('status').textContent=scale<1e-12?'Critical point: f′(0) = 0. The mapped parameter derivatives vanish, so their angle is undefined. For z², the limiting outgoing directions double the source angle (Theorem 10).':'The two tangent vectors receive the same local rotation and length factor. The oriented opening is preserved.';
+function render(){
+  const z=[Number(byId('real').value),Number(byId('imag').value)],opening=Number(byId('opening').value),h=Number(byId('neighborhood').value),map=maps[byId('map').value];
+  const w=map.f(z),derivative=map.df(z),scale=Math.hypot(...derivative),ordinary=scale>0;
+  const tangents=[25,25+opening].map(a=>[Math.cos(a*Math.PI/180),Math.sin(a*Math.PI/180)]);
+  const curves=tangents.map((T,j)=>Array.from({length:161},(_,i)=>curvePoint(z,T,j,-h+2*h*i/160)));
+  const mapped=curves.map(c=>c.map(map.f)),imageTangents=tangents.map(t=>multiply(derivative,t));
+  const signedAngle=(u,v)=>Math.atan2(u[0]*v[1]-u[1]*v[0],u[0]*v[0]+u[1]*v[1]);
+  const imageOpening=ordinary?signedAngle(imageTangents[0],imageTangents[1])*180/Math.PI:null;
+  // Keep the intersection central. Including the remote coordinate origin hid
+  // local tangency, especially for exp(z). Every panel still uses equal x/y units.
+  const fit=(paths,center)=>{const radius=1.25*Math.max(...paths.flat().flatMap(p=>[Math.abs(p[0]-center[0]),Math.abs(p[1]-center[1])]),1e-5);return [center[0]-radius,center[0]+radius,center[1]-radius,center[1]+radius];};
+  const extents=[fit(curves,z),fit(mapped,w)];
+  function label(panel,text,p,dx=9,dy=-10,color='#17374a'){
+    const [x,y]=panel.project(p);panel.ctx.font='bold 14px system-ui';panel.ctx.lineWidth=5;panel.ctx.strokeStyle='white';panel.ctx.strokeText(text,x+dx,y+dy);panel.ctx.fillStyle=color;panel.ctx.fillText(text,x+dx,y+dy);
+  }
+  for(const [j,id] of ['source','image'].entries()){
+    const panel=plotPanel(byId(id),extents[j]),center=j?w:z,paths=j?mapped:curves,ts=j?imageTangents:tangents;
+    const span=extents[j][1]-extents[j][0];
+    panel.grid(10**Math.floor(Math.log10(span/3)));
+    // Draw every curve first; no later curve can cover a tangent arrow.
+    paths.forEach((curve,k)=>{const color=k?'#4680b7':'#d07858';panel.line(curve,color,3);label(panel,(j?'K':'C')+(k+1),curve[23],k?-28:10,k?-10:22,color);});
+    if(!j||ordinary){
+      ts.forEach((v,k)=>{
+        const color=k?'#123f82':'#92341e',norm=Math.hypot(...v),direction=v.map(value=>value/norm);
+        const pointAt=distance=>center.map((value,index)=>value+distance*direction[index]);
+        const start=pointAt(-.37*span),end=pointAt(.37*span),tip=pointAt(.28*span);
+        panel.line([start,end],'white',7);panel.line([start,end],color,2.2,[7,5]);
+        panel.line([center,tip],'white',8);panel.line([center,tip],color,3.5);panel.arrow(center,tip,color);
+        label(panel,'T'+(k+1)+(j?'*':''),tip,10,k?18:-13,color);
+      });
+      const a=Math.atan2(ts[0][1],ts[0][0]),theta=j?signedAngle(ts[0],ts[1]):opening*Math.PI/180,q=panel.project(center);
+      const radius=Math.max(34,Math.min(58,byId(id).clientWidth*.12)),counterclockwise=theta>=0,ctx=panel.ctx;
+      ctx.save();ctx.beginPath();ctx.moveTo(...q);ctx.arc(q[0],q[1],radius,-a,-a-theta,counterclockwise);ctx.closePath();ctx.fillStyle='#9256b52b';ctx.fill();
+      ctx.beginPath();ctx.arc(q[0],q[1],radius,-a,-a-theta,counterclockwise);ctx.strokeStyle='white';ctx.lineWidth=7;ctx.stroke();ctx.strokeStyle='#66348c';ctx.lineWidth=3.5;ctx.stroke();
+      if(Math.abs(theta)>1e-8){
+        const end=-a-theta,tip=[q[0]+radius*Math.cos(end),q[1]+radius*Math.sin(end)],direction=end+(counterclockwise?-Math.PI/2:Math.PI/2);
+        ctx.beginPath();ctx.moveTo(...tip);ctx.lineTo(tip[0]-10*Math.cos(direction-.45),tip[1]-10*Math.sin(direction-.45));ctx.lineTo(tip[0]-10*Math.cos(direction+.45),tip[1]-10*Math.sin(direction+.45));ctx.closePath();ctx.fillStyle='#66348c';ctx.fill();
+      }
+      ctx.restore();
+      const middle=a+theta/2,labelPoint=[center[0]+(radius+19)/panel.unit*Math.cos(middle),center[1]+(radius+19)/panel.unit*Math.sin(middle)];label(panel,j?'θ′':'θ',labelPoint,2,-2,'#66348c');
+    }
+    panel.dot(center);label(panel,j?'w₀':'z₀',center,8,23);
+  }
+  const angle=v=>Math.atan2(v[1],v[0])*180/Math.PI,turn=angle(derivative);
+  const signed=value=>(value>1e-10?'+':'')+(Math.abs(value)<1e-10?0:value).toFixed(2)+'°';
+  const orientation=value=>Math.abs(value)<1e-10?'zero opening':value>0?'counterclockwise (+)':'clockwise (−)';
+  byId('source-angle').textContent=`θ = ${signed(opening)} · ${orientation(opening)}`;
+  byId('image-angle').textContent=imageOpening===null?'θ′ undefined: f′(z₀) = 0':`θ′ = ${signed(imageOpening)} · ${orientation(imageOpening)}`;
+  lastState={z,w,scale,opening,imageOpening,derivative,tangents,imageTangents,h,extents};
+  byId('neighborhood-value').textContent=h.toFixed(2);
+  byId('readout').textContent=`z₀ = (${z.map(v=>v.toFixed(3)).join(', ')}) → w₀ = (${w.map(v=>v.toFixed(3)).join(', ')}) · θ = ${opening.toFixed(2)}° · image tangent angle = ${imageOpening===null?'undefined':imageOpening.toFixed(2)+'°'} · |f′(z₀)| = ${scale.toFixed(4)} · tangent rotation = ${ordinary?turn.toFixed(2)+'°':'undefined'}`;
+  byId('tangent-values').textContent=imageTangents.map((T,k)=>`T${k+1}* = (${T.map(v=>v.toFixed(5)).join(', ')})`).join(' · ');
+  byId('status').textContent=ordinary?'Dashed lines are the tangent supports; solid arrows indicate the positive parameter direction. Reduce h to see the curves approach their tangents at the marked intersection.':'Critical point: f′(0) = 0. Both image parameter derivatives vanish, so no image tangent arrows or angle are drawn. For z², outgoing limiting directions double the source angle (Theorem 10).';
 }
-document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',render));byId('critical').onclick=()=>{byId('real').value=0;byId('imag').value=0;render();};byId('reset').onclick=()=>{byId('real').value=.45;byId('imag').value=.3;byId('opening').value=65;byId('map').value='square';render();};new ResizeObserver(render).observe(byId('source'));render();
+document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',render));
+byId('critical').onclick=()=>{byId('real').value=0;byId('imag').value=0;render();};
+byId('reset').onclick=()=>{byId('real').value=.45;byId('imag').value=.3;byId('opening').value=65;byId('neighborhood').value=.2;byId('map').value='square';render();};
+new ResizeObserver(render).observe(byId('source'));render();
 </script></body></html>
