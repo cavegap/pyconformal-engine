@@ -24,10 +24,16 @@
   const graticule = document.createElement('canvas');
   graticule.width = graticule.height = size;
   const grid = graticule.getContext('2d');
-  const gridColors = {meridian: '#91e5df', parallel: '#fff0c6'};
+  const gridColors = {meridian: '#91e5df', parallel: '#fff0c6', equator: '#ffd27a'};
   function strokeGrid(context, color) {
     context.lineWidth = 2.8; context.strokeStyle = '#081810a6'; context.stroke();
     context.lineWidth = 1.05; context.strokeStyle = color; context.stroke();
+  }
+  function strokeEquator(context) {
+    context.save(); context.lineJoin = 'round'; context.lineCap = 'round';
+    context.lineWidth = 4.6; context.strokeStyle = '#102018'; context.stroke();
+    context.lineWidth = 2.2; context.strokeStyle = gridColors.equator; context.stroke();
+    context.restore();
   }
   for (const path of window.heroGraticule) {
     grid.beginPath();
@@ -53,6 +59,7 @@
   function draw() {
     if (!ready) return;
     const cameraLongitude = longitude - 25;
+    globe.dataset.cameraLongitude = String(cameraLongitude);
     for (const pixel of pixels) {
       const lon = wrap(cameraLongitude + pixel.longitude);
       const u = Math.min(imageWidth - 1, Math.floor((lon + 180) / 360 * imageWidth));
@@ -69,6 +76,7 @@
         size / 2 - radius * Math.sin(b), Math.cos(b) * Math.cos(a)];
     };
     for (let parallel = -75; parallel <= 75; parallel += 15) {
+      if (parallel === 0) continue;
       ctx.beginPath(); let connected = false;
       for (let lon = -180; lon <= 180; lon += 3) {
         const [x, y, z] = projectGlobe(lon, parallel);
@@ -88,7 +96,17 @@
       }
       strokeGrid(ctx, gridColors.meridian);
     }
-    const point = PeirceMap.project(longitude, latitude);
+    // One geographic location drives both markers; the globe camera changes only the view.
+    const selected = {longitude, latitude};
+    ctx.beginPath(); let connectedEquator = false;
+    for (let lon = -180; lon <= 180; lon += 1) {
+      const [x, y, z] = projectGlobe(lon, 0);
+      if (z < 0) { connectedEquator = false; continue; }
+      if (connectedEquator) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+      connectedEquator = true;
+    }
+    strokeEquator(ctx);
+    const point = PeirceMap.project(selected.longitude, selected.latitude);
     const sx = (point[0] + 1) / 2 * size, sy = (1 - point[1]) / 2 * size;
     sq.clearRect(0, 0, size, size);
     sq.drawImage(graticule, 0, 0);
@@ -96,7 +114,7 @@
     // The diamond separates hemispheres; its four vertices are the equatorial cuts.
     sq.beginPath(); sq.moveTo(size / 2, 0); sq.lineTo(size, size / 2);
     sq.lineTo(size / 2, size); sq.lineTo(0, size / 2); sq.closePath();
-    sq.strokeStyle = '#efb75c'; sq.lineWidth = 1.6; sq.stroke();
+    strokeEquator(sq);
     sq.beginPath(); let last;
     for (const p of trail) {
       const x = (p[0] + 1) / 2 * size, y = (1 - p[1]) / 2 * size;
@@ -106,7 +124,7 @@
     }
     sq.strokeStyle = '#eebc7090'; sq.lineWidth = 1.5; sq.stroke();
     mark(sq, sx, sy, 'P′');
-    const [gx, gy] = projectGlobe(longitude, latitude); mark(ctx, gx, gy);
+    const [gx, gy] = projectGlobe(selected.longitude, selected.latitude); mark(ctx, gx, gy);
     readout.textContent = `P · ${Math.abs(latitude).toFixed(1)}°${latitude < 0 ? 'S' : 'N'}  ${Math.abs(longitude).toFixed(1)}°${longitude < 0 ? 'W' : 'E'}`;
     globe.dataset.longitude = String(longitude); globe.dataset.latitude = String(latitude);
     square.dataset.x = String(point[0]); square.dataset.y = String(point[1]);

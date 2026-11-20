@@ -1,0 +1,8 @@
+.language-picker{display:flex;align-items:center;gap:4px;padding:4px;border:1px solid #789b91;border-radius:24px;white-space:nowrap;font:600 13px/1.5 system-ui;flex-shrink:0}
+.language-picker a{padding:5px 11px;border-radius:18px;text-decoration:none;color:inherit}
+.language-picker a[aria-current="true"]{background:#176e62;color:white}
+.language-picker a:focus-visible{outline:3px solid #bd8130;outline-offset:3px}
+header{flex-wrap:wrap}.language-picker{margin-left:auto}header nav:not(.language-picker){flex-wrap:wrap}
+@media(max-width:600px){.language-picker{margin-left:0}header{gap:14px}.language-picker a{padding:7px 12px}}
+
+.grid-key{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-key span{min-width:0;overflow-wrap:anywhere}.grid-key span:before{flex-shrink:0}@media(max-width:550px){.grid-key{grid-template-columns:1fr}}

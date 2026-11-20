@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-20",
+  "base_commit_observed_at_completion": "8893f2b",
+  "site_build": {"pages": 92, "verified_local_links_and_fragments": 2162},
+  "pytest": {"passed": 31, "files": ["tests/test_build_pages.py", "tests/test_site_policy.py", "tests/test_site_languages.py"]},
+  "browser": {
+    "engine": "Microsoft Edge headless",
+    "languages": ["es", "en"],
+    "widths": [1440, 430],
+    "cases_per_language_and_width": 19,
+    "passed_page_checks": 76,
+    "additional": ["remembered language and explicit override", "no JavaScript", "blocked storage", "CSP blocks inline execution and outbound connections"],
+    "torus_interactions": ["P/Q share spherical image", "period buttons change representative only", "four branch presets", "pointer selection", "camera preserves elliptic image", "localized status", "rendered mathematics", "responsive workspace without page overflow"]
+  },
+  "visual_review": "Spanish desktop full page and mobile workspace screenshots inspected; three views, point labels and controls readable.",
+  "scope": "Local addition only. No commit, push or publication performed for this application. The full 2021 article remains to be reviewed."
+}
