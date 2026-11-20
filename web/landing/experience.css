@@ -41,3 +41,17 @@ body.page-gallery,body.page-example,body.page-document{background:radial-gradien
 @media(max-width:650px){.page-landing .view-title,.page-landing .view-title strong{font-size:14px}.page-landing .view-kind{font-size:10px}.page-landing .view-legend{font-size:10px}.page-landing .animation-console .grid-key{grid-template-columns:repeat(2,minmax(0,1fr))}.page-landing #experiment-caption>.scale-note-full{display:none}.page-landing #experiment-caption>.scale-note-compact{display:block}}
 
 .page-landing .view-kind{margin-right:0}
+
+
+/* Align the first visual panels with their parameter rail in every example. */
+.page-example .visual-stage>:is(.planes,.plots,.views){margin-top:0}
+.page-example .visual-stage>figure,.page-example .visual-stage>:is(.planes,.plots,.views)>figure{margin-top:0}
+
+/* Shared site signature, also used by the gallery and reference pages. */
+.site-header .brand{display:flex;align-items:center;gap:10px;min-width:0}.site-header .brand-logo{width:44px;height:44px;flex-shrink:0;margin:0}.site-header .brand-copy{display:grid;gap:4px}.site-header .brand-name{font:700 21px/1.1 system-ui;letter-spacing:-.5px;color:#fff4dc}.site-header .brand-tagline{font:400 10px/1.35 system-ui;color:#c3d2bf;max-width:190px}.site-header>nav:not(.language-picker)>a{display:inline-flex;align-items:center;min-height:44px;padding:8px 10px;border-radius:7px;text-decoration:none}.site-header>nav:not(.language-picker)>a:hover{background:#2a4a37}.site-header>nav:not(.language-picker){gap:4px}
+@media(max-width:600px){.site-header .brand-logo{width:34px;height:34px}.site-header .brand-name{font-size:17px}.site-header .brand-tagline{font-size:9px;max-width:125px}.site-header .brand{gap:7px}}
+
+/* Outlined wordmark: mathematical italic f, accessible name PyConformal. */
+.brand .brand-wordmark{display:block;width:170px;height:auto;max-width:100%;margin:0;border:0;border-radius:0;box-shadow:none}.brand .brand-name{line-height:0}.about-identity>p .brand-wordmark{width:205px;height:auto;border-radius:0;box-shadow:none;margin:0}.about-identity>img{border-radius:0;box-shadow:none}
+@media(max-width:600px){.brand .brand-wordmark{width:137px}.about-identity>p .brand-wordmark{width:180px}.site-header .brand-wordmark{width:135px}}
+@media(max-width:370px){.brand .brand-wordmark,.site-header .brand-wordmark{width:112px}}

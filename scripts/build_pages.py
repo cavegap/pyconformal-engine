@@ -564,6 +564,7 @@ def build(root: Path = ROOT) -> Path:
                     ".css",
                     ".js",
                     ".jpg",
+                    ".svg",
                     ".json",
                     ".bib",
                     ".ris",
@@ -571,6 +572,12 @@ def build(root: Path = ROOT) -> Path:
                     ".cff",
                 }:
                     raise ValueError("Unreviewed web asset type or directory.")
+                if source.suffix == ".svg" and relative not in {
+                    Path("web/landing/pyconformal-mark.svg"),
+                    Path("web/landing/pyconformal-wordmark-dark.svg"),
+                    Path("web/landing/pyconformal-wordmark-light.svg"),
+                }:
+                    raise ValueError("Unreviewed SVG asset.")
                 target = staging / "assets" / relative.relative_to("web")
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(source, target)

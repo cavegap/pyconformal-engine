@@ -1,0 +1,9 @@
+{
+  "referenceDigits": 70,
+  "referencePoints": 30,
+  "sphereError": 1.4087150935148694e-15,
+  "valueError": 6.554799536984032e-16,
+  "periodError": 3.617163014265598e-15,
+  "pairError": 3.885780586188048e-16,
+  "derivativeError": 9.896178990414097e-11
+}

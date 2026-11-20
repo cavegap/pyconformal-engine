@@ -103,6 +103,25 @@ def editions(output: Path, root: Path) -> None:
         if relative.parts[0] == "es":
             continue
         original = page.read_text(encoding="utf-8")
+        logo = posixpath.relpath(
+            (output / "assets/landing/pyconformal-mark.svg").as_posix(), page.parent.as_posix()
+        )
+        wordmark = posixpath.relpath(
+            (output / "assets/landing/pyconformal-wordmark-dark.svg").as_posix(),
+            page.parent.as_posix(),
+        )
+        brand = (
+            f'<img class="brand-logo" src="{logo}" alt="" width="48" height="48">'
+            '<span class="brand-copy"><span class="brand-name">'
+            f'<img class="brand-wordmark" src="{wordmark}" alt="PyConformal" width="170" height="36"></span>'
+            '<span class="brand-tagline">Interactive mathematics lab</span></span>'
+        )
+        original = re.sub(
+            r'(<a class="brand"[^>]*>).*?</a>',
+            r"\g<1>" + brand + "</a>",
+            original,
+            flags=re.DOTALL,
+        )
         if 'class="project-credit"' not in original:
             credit = '<p class="project-credit">PyConformal Engine · Conceived and developed by César Augusto Vega Penagos.</p>'
             if "</footer>" in original:
@@ -169,6 +188,7 @@ def editions(output: Path, root: Path) -> None:
                     1,
                 )
             head = (
+                f'<link rel="icon" type="image/svg+xml" href="{prefix}/assets/landing/pyconformal-mark.svg">'
                 f'<link rel="stylesheet" href="{prefix}/assets/landing/language.css">'
                 f'<link rel="stylesheet" href="{prefix}/assets/landing/experience.css">'
                 f'<script src="{prefix}/assets/landing/language.js"></script>'

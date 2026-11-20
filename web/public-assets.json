@@ -110,5 +110,12 @@
   "web/landing/language.css",
   "examples/gallery-preview.css",
   "examples/gallery-preview.js",
-  "web/landing/experience.css"
+  "web/landing/experience.css",
+  "examples/riemann-torus-math.js",
+  "examples/riemann-torus.css",
+  "examples/riemann-torus.html",
+  "examples/riemann-torus.js",
+  "web/landing/pyconformal-mark.svg",
+  "web/landing/pyconformal-wordmark-dark.svg",
+  "web/landing/pyconformal-wordmark-light.svg"
 ]
