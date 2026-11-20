@@ -1,32 +1,26 @@
-# Fuentes de la marca PyConformal
+# Identidad final de PyConformal
 
-**Firma activa:** [function-wordmark/](function-wordmark/README.md). Integra la f matemática y el sello Peirce. Las variantes descritas abajo son el primer bosquejo conservado como histórico.
+Selección de César Augusto Vega Penagos, 20 de noviembre de 2026. Conserva la silueta del monograma y la superficie de la referencia elegida, con retícula azul mineral, letras verdes y punto cobre. En el nombre, la f se sustituye por la f matemática cursiva. La marca se sigue escribiendo y leyendo PyConformal. La biblioteca y sus citas conservan PyConformal Engine.
 
+## Archivos necesarios
 
-Diseño preparado para el proyecto de César Augusto Vega Penagos, 20 de noviembre de 2026.
+- `logo.svg`: símbolo y nombre debajo.
+- `horizontal.svg`: firma para cabeceras.
+- `symbol.svg`: símbolo detallado, sin nombre.
+- `wordmark.svg`: nombre con f matemática.
+- `icon.svg`: monograma con trazos finos retirados para tamaños pequeños.
+- Los sufijos `-dark` indican versiones claras para fondos oscuros.
+- `monochrome.svg`: logotipo negro para documentos.
+- `reference-original.png`: única referencia raster conservada, separada de los SVG.
+- `preview.html`: prueba sobre fondos claros y oscuros y de iconos a tamaño real.
+- `logo-kit.zip`: paquete portátil de estas fuentes.
 
-## Archivos editables
+Los SVG tienen transparencia real, trazados editables y grupos separados. No contienen PNG incrustados, scripts, texto dependiente de fuentes ni recursos externos. Se conserva el trazado de la imagen original; sus bordes no son las curvas Bézier generativas originales. La separación de monograma y retícula se infiere de sus grosores y puede retocarse en un editor vectorial. El glifo matemático de la f se entregó como contorno de Cambria Math, sin distribuir el archivo tipográfico.
 
-- `pyconformal-mark.svg`: original limpio del sello. Curvas y punto definidos como vectores; no requiere fuentes tipográficas.
-- `pyconformal-construction.svg`: bosquejo con retícula, círculo y cuadrado de referencia. Las guías son auxiliares de diseño y no forman parte del logo final.
-- `pyconformal-mark-monochrome.svg`: variante de una tinta para documentos sobre fondo blanco.
-- `pyconformal-wordmark-light-background.svg`: sello y nombre para fondos claros.
-- `pyconformal-wordmark-dark-background.svg`: sello y nombre para fondos oscuros.
+## Colores
 
-Los SVG se pueden editar en Inkscape, Illustrator o Figma. El nombre en los logotipos horizontales sigue siendo texto editable (Segoe UI, con alternativas Arial y sans-serif); antes de entregar un archivo de imprenta, convertir ese texto a trazados en el editor elegido. El sello original ya está formado por trazados y formas vectoriales.
+Verde #0A4F3C; marfil #F8F1E3; azul mineral #4D879B; cobre #C47754. Sobre oscuro: azul #8CC2D0 y cobre #D9A086. Mantener las proporciones de cada viewBox. Para tamaños pequeños, usar icon.svg y reservar symbol.svg para formatos mayores.
 
-## Concepto y construcción
+## Copias de publicación
 
-El contorno pasa de una curva redondeada a una frontera cuadrada. Los trazos interiores sugieren una retícula transformada y el punto dorado recuerda el punto que se sigue en los experimentos. Es un símbolo gráfico: sus curvas no representan una aplicación conforme calculada ni una proyección específica.
-
-Lienzo del sello: 96 × 96 unidades. Fondo verde con radio de 24 unidades. Contorno principal entre las coordenadas 16 y 80. Punto destacado en (31, 44). El bosquejo añade guías de construcción en una mesa de 128 × 128 unidades.
-
-Colores: verde `#153D31`, crema `#F2D9A2`, verde suave `#7AA997`, dorado `#EFBB68`. Mantener las proporciones y dejar alrededor al menos 12 unidades del lienzo original. Para usos pequeños, utilizar el sello sin el nombre ni el descriptor.
-
-## Uso en web, documentos y artículos
-
-La web utiliza una copia del original en `web/landing/pyconformal-mark.svg`, incluida en el manifiesto de publicación. Si se modifica el diseño, actualizar el original de esta carpeta y esa copia de la web a la vez.
-
-Para documentos que admitan SVG, insertar el archivo vectorial directamente. Para un artículo, usar la versión monocromática y exportar desde el editor a PDF vectorial o al formato que solicite la revista. Para promoción, usar el logotipo horizontal correspondiente al color del fondo; si hace falta una imagen rasterizada, exportar a PNG con resolución suficiente desde el original. No usar capturas de pantalla como fuente.
-
-El sello identifica el proyecto. La cita del software y los créditos científicos se mantienen por separado en los recursos del repositorio.
+La web usa web/landing/pyconformal-mark.svg (icono y favicon), pyconformal-symbol.svg (símbolo detallado), pyconformal-wordmark-dark.svg (sobre fondos oscuros) y pyconformal-wordmark-light.svg (sobre fondos claros). Son copias necesarias para el sitio estático; la carpeta de diseño es el original de entrega. El historial de Git conserva las exploraciones retiradas.

@@ -574,6 +574,7 @@ def build(root: Path = ROOT) -> Path:
                     raise ValueError("Unreviewed web asset type or directory.")
                 if source.suffix == ".svg" and relative not in {
                     Path("web/landing/pyconformal-mark.svg"),
+                    Path("web/landing/pyconformal-symbol.svg"),
                     Path("web/landing/pyconformal-wordmark-dark.svg"),
                     Path("web/landing/pyconformal-wordmark-light.svg"),
                 }:

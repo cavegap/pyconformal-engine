@@ -117,5 +117,6 @@
   "examples/riemann-torus.js",
   "web/landing/pyconformal-mark.svg",
   "web/landing/pyconformal-wordmark-dark.svg",
-  "web/landing/pyconformal-wordmark-light.svg"
+  "web/landing/pyconformal-wordmark-light.svg",
+  "web/landing/pyconformal-symbol.svg"
 ]

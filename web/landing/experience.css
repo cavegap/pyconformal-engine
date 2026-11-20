@@ -55,3 +55,8 @@ body.page-gallery,body.page-example,body.page-document{background:radial-gradien
 .brand .brand-wordmark{display:block;width:170px;height:auto;max-width:100%;margin:0;border:0;border-radius:0;box-shadow:none}.brand .brand-name{line-height:0}.about-identity>p .brand-wordmark{width:205px;height:auto;border-radius:0;box-shadow:none;margin:0}.about-identity>img{border-radius:0;box-shadow:none}
 @media(max-width:600px){.brand .brand-wordmark{width:137px}.about-identity>p .brand-wordmark{width:180px}.site-header .brand-wordmark{width:135px}}
 @media(max-width:370px){.brand .brand-wordmark,.site-header .brand-wordmark{width:112px}}
+
+/* Final identity: reference monogram, mineral-blue surface, mathematical f. */
+.brand .brand-logo,.site-header .brand-logo{object-fit:contain}.brand .brand-wordmark{width:170px}.about-identity>img{width:190px;height:135px;object-fit:contain}.about-identity>p .brand-wordmark{width:205px}
+@media(max-width:600px){.brand .brand-wordmark,.site-header .brand-wordmark{width:137px}.about-identity{grid-template-columns:85px 1fr}.about-identity>img{width:85px;height:70px}.about-identity>p .brand-wordmark{width:180px}}
+@media(max-width:370px){.brand .brand-wordmark,.site-header .brand-wordmark{width:112px}}
