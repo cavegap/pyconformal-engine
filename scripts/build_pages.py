@@ -8,6 +8,7 @@ import json
 import posixpath
 import re
 import shutil
+import sys
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
@@ -361,7 +362,7 @@ def document(content: str, source: Path, root: Path) -> str:
 <main class="document"><p class="breadcrumb"><a href="{root_link("index.html")}">Home</a> / Companion</p>
 {body}
 <p class="source-link"><a href="{source_url}">Read this page in the repository</a></p></main>
-<footer class="site-footer">Vega Penagos &amp; Olivero Zapata (2015) · PyConformal Engine research preview</footer></body></html>'''
+<footer class="site-footer"><p class="project-credit">PyConformal Engine · Conceived and developed by César Augusto Vega Penagos.</p></footer></body></html>'''
     return rewrite(page, source, root)
 
 
@@ -532,6 +533,8 @@ def validate_site(output: Path) -> tuple[int, int]:
 
 def build(root: Path = ROOT) -> Path:
     """Build an allowlisted site, replacing only a previously marked output."""
+    from scripts.site_languages import editions
+
     root = root.resolve()
     output = root / "site"
     if output.resolve() != output or output.parent != root:
@@ -602,6 +605,8 @@ def build(root: Path = ROOT) -> Path:
                 )
             else:
                 shutil.copy2(source, target)
+        if root / "web/landing/es.json" in sources:
+            editions(staging, root)
         for page in staging.rglob("*.html"):
             page.write_text(
                 harden_page(page.read_text(encoding="utf-8"), page, staging),
@@ -623,4 +628,5 @@ def build(root: Path = ROOT) -> Path:
 
 
 if __name__ == "__main__":
+    sys.path.insert(0, str(ROOT))
     build()

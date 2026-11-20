@@ -1,10 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lunar outlines from the thesis | PyConformal Engine</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Lunar outlines from the thesis | PyConformal Engine</title>
+<style>
     :root { font: 16px/1.5 Inter, system-ui, sans-serif; color: #17374a; background: #f3f7f6; }
     * { box-sizing: border-box; }
     body { margin: 0; }
@@ -32,60 +33,60 @@
     [hidden] { display: none !important; }
     @media (max-width: 900px) { .planes { grid-template-columns: 1fr; } }
   </style>
-<link rel="stylesheet" href="../web/math.css"><link rel="stylesheet" href="example-guide.css"></head>
+<link href="../web/math.css" rel="stylesheet"/><link href="example-guide.css" rel="stylesheet"/></head>
 <body>
 <main>
-  <header>
-    <nav aria-label="Project"><a href="index.html">PyConformal Engine</a> · <a href="../docs/lunar-thesis-outlines.md">Source and verification</a></nav>
-    <h1>Follow a lunar outline</h1>
-    <p>Follow the cyan contour from the lunar sphere to the Mercator tracing and its transformed image. Click any view or move the slider.</p>
-    <p><small>The globe provides geographic context through an orthographic view. The archival registration is approximate; this is not a surveyed crater boundary.</small></p>
-  </header>
-  <div class="controls" role="group" aria-label="Transformation">
-    <strong>Transformation</strong>
-    <button type="button" data-map="square" aria-pressed="true">Square · <i>z</i>²</button>
-    <button type="button" data-map="cube" aria-pressed="false">Cube · <i>z</i>³</button>
-    <button type="button" data-map="log" aria-pressed="false">New · log(1 + <i>z</i>)</button>
-    <button type="button" data-map="peirce" aria-pressed="false">Peirce · Moon</button>
-    <label><input id="secondary" type="checkbox" checked> Show smaller outlines</label>
-    <label id="detail-control" hidden><input id="detail" type="checkbox"> Zoom to tracing</label>
-  </div>
-  <section class="example-guide" aria-label="How to explore this example"><h2>How to explore this example</h2><ol><li><strong>Follow one point</strong><p>Click near the cyan outline in any view or use the position slider. The selection snaps to the nearest existing sample.</p></li><li><strong>Compare the chain</strong><p>The globe gives context, Mercator is the source tracing, and the third panel shows its chosen transform. A–D are matching reference vertices; P′ marks the transformed selection.</p></li><li><strong>Switch the map</strong><p>Choose square, cube, logarithm or Peirce without changing the selected sample. Zoom to tracing is available in Peirce mode.</p></li></ol><p class="guide-limit">The historical registration is approximate. The cyan outline is an archival reconstruction, not a surveyed crater boundary. Zoom changes the view, not the mathematical coordinates.</p></section><div class="planes">
-    <figure class="interactive-source">
-      <p class="interaction-badge">Select here · click the cyan contour</p><figcaption>1 · Lunar sphere</figcaption>
-      <canvas id="sphere" role="img" aria-label="The same traced contour on an orthographic lunar globe, centered at 0 degrees longitude and 30 degrees north."></canvas>
-    </figure>
-    <figure class="interactive-source">
-      <p class="interaction-badge">Select here · click the cyan contour</p><figcaption>2 · Mercator tracing</figcaption>
-      <canvas id="source" role="img" aria-label="Lunar outline traced for Figure 4.5, with reference vertices A through D and selected point P."></canvas>
-    </figure>
-    <figure class="interactive-source">
-      <p class="interaction-badge">Select here · click the cyan contour</p><figcaption id="image-title">Image · square map</figcaption>
-      <canvas id="image" role="img" aria-label="Mapped lunar outline with reference vertices A through D and the image of the selected point."></canvas>
-    </figure>
-  </div>
-  <div class="controls">
-    <label class="slider">Position along the cyan outline
-      <input id="position" type="range" min="0" max="1" step="1" value="0">
-    </label>
-    <div class="controls" role="group" aria-label="Jump to a reference vertex">
-      <button type="button" data-mark="0" aria-pressed="false">A</button>
-      <button type="button" data-mark="1" aria-pressed="false">B</button>
-      <button type="button" data-mark="2" aria-pressed="false">C</button>
-      <button type="button" data-mark="3" aria-pressed="false">D</button>
-    </div>
-  </div>
-  <dl>
-    <div><dt>Source point P</dt><dd id="source-point"></dd></div>
-    <div><dt>Mapped point P′</dt><dd id="image-point"></dd></div>
-    <div id="geographic" hidden><dt>Approximate lunar coordinates</dt><dd id="lunar-point"></dd></div>
-  </dl>
-  <p id="status"></p>
-<section class="formula-panel" data-formula-map="square"><h2>Square map</h2><div class="math-display" data-tex="f(z)=z^2,\quad f^{\prime}(z)=2z">f(z) = z²; f′(z) = 2z</div></section><section class="formula-panel" data-formula-map="cube" hidden><h2>Cubic map</h2><div class="math-display" data-tex="f(z)=z^3,\quad f^{\prime}(z)=3z^2">f(z) = z³; f′(z) = 3z²</div></section><section class="formula-panel" data-formula-map="log" hidden><h2>Principal logarithm</h2><div class="math-display" data-tex="f(z)=\operatorname{Log}(1+z),\quad f^{\prime}(z)=\frac{1}{1+z}">f(z) = Log(1 + z); f′(z) = 1/(1 + z)</div></section><section class="formula-panel" data-formula-map="peirce" hidden><h2>Peirce composition</h2><div class="math-display" data-tex="\text{sphere}\longrightarrow\zeta\longrightarrow p\longrightarrow S(p)\longrightarrow w">Sphere → stereographic disk → half-plane → SC square → global arrangement</div></section>
-  <p id="formula"></p>
-  <footer>Figure 4.5, Vega Penagos &amp; Olivero Zapata (2015).
+<header>
+<nav aria-label="Project"><a href="index.html">PyConformal Engine</a> · <a href="../docs/lunar-thesis-outlines.md">Source and verification</a></nav>
+<h1>Follow a lunar outline</h1><aside class="case-purpose"><p class="case-kicker">What you can explore</p><p><strong>Follow the evidence behind a reconstructed figure.</strong> Trace the same archived contour through several maps. Compare the written formula with the plotted result and distinguish the approximate registration from independently measured geography.</p></aside>
+<p>Follow the cyan contour from the lunar sphere to the Mercator tracing and its transformed image. Click any view or move the slider.</p>
+<p><small>The globe provides geographic context through an orthographic view. The archival registration is approximate; this is not a surveyed crater boundary.</small></p>
+</header>
+
+<section aria-label="How to explore this example" class="example-guide"><h2>How to explore this example</h2><ol><li><strong>Follow one point</strong><p>Click near the cyan outline in any view or use the position slider. The selection snaps to the nearest existing sample.</p></li><li><strong>Compare the chain</strong><p>The globe gives context, Mercator is the source tracing, and the third panel shows its chosen transform. A–D are matching reference vertices; P′ marks the transformed selection.</p></li><li><strong>Switch the map</strong><p>Choose square, cube, logarithm or Peirce without changing the selected sample. Zoom to tracing is available in Peirce mode.</p></li></ol><p class="guide-limit">The historical registration is approximate. The cyan outline is an archival reconstruction, not a surveyed crater boundary. Zoom changes the view, not the mathematical coordinates.</p></section><div class="interactive-workspace"><div class="visual-stage"><div class="planes">
+<figure class="interactive-source">
+<p class="interaction-badge">Select here · click the cyan contour</p><figcaption>1 · Lunar sphere</figcaption>
+<canvas aria-label="The same traced contour on an orthographic lunar globe, centered at 0 degrees longitude and 30 degrees north." id="sphere" role="img"></canvas>
+</figure>
+<figure class="interactive-source">
+<p class="interaction-badge">Select here · click the cyan contour</p><figcaption>2 · Mercator tracing</figcaption>
+<canvas aria-label="Lunar outline traced for Figure 4.5, with reference vertices A through D and selected point P." id="source" role="img"></canvas>
+</figure>
+<figure class="interactive-source">
+<p class="interaction-badge">Select here · click the cyan contour</p><figcaption id="image-title">Image · square map</figcaption>
+<canvas aria-label="Mapped lunar outline with reference vertices A through D and the image of the selected point." id="image" role="img"></canvas>
+</figure>
+</div></div><aside aria-label="Controls and readings" class="parameter-rail"><section class="parameter-controls"><h2>Controls</h2><div aria-label="Transformation" class="controls" role="group">
+<strong>Transformation</strong>
+<button aria-pressed="true" data-map="square" type="button">Square · <i>z</i>²</button>
+<button aria-pressed="false" data-map="cube" type="button">Cube · <i>z</i>³</button>
+<button aria-pressed="false" data-map="log" type="button">New · log(1 + <i>z</i>)</button>
+<button aria-pressed="false" data-map="peirce" type="button">Peirce · Moon</button>
+<label><input checked="" id="secondary" type="checkbox"/> Show smaller outlines</label>
+<label hidden="" id="detail-control"><input id="detail" type="checkbox"/> Zoom to tracing</label>
+</div><div class="controls">
+<label class="slider">Position along the cyan outline
+      <input id="position" max="1" min="0" step="1" type="range" value="0"/>
+</label>
+<div aria-label="Jump to a reference vertex" class="controls" role="group">
+<button aria-pressed="false" data-mark="0" type="button">A</button>
+<button aria-pressed="false" data-mark="1" type="button">B</button>
+<button aria-pressed="false" data-mark="2" type="button">C</button>
+<button aria-pressed="false" data-mark="3" type="button">D</button>
+</div>
+</div></section><div class="live-results"><dl>
+<div><dt>Source point P</dt><dd id="source-point"></dd></div>
+<div><dt>Mapped point P′</dt><dd id="image-point"></dd></div>
+<div hidden="" id="geographic"><dt>Approximate lunar coordinates</dt><dd id="lunar-point"></dd></div>
+</dl><p id="status"></p></div></aside></div>
+
+
+
+<section class="formula-panel" data-formula-map="square"><h2>Square map</h2><div class="math-display" data-tex="f(z)=z^2,\quad f^{\prime}(z)=2z">f(z) = z²; f′(z) = 2z</div></section><section class="formula-panel" data-formula-map="cube" hidden=""><h2>Cubic map</h2><div class="math-display" data-tex="f(z)=z^3,\quad f^{\prime}(z)=3z^2">f(z) = z³; f′(z) = 3z²</div></section><section class="formula-panel" data-formula-map="log" hidden=""><h2>Principal logarithm</h2><div class="math-display" data-tex="f(z)=\operatorname{Log}(1+z),\quad f^{\prime}(z)=\frac{1}{1+z}">f(z) = Log(1 + z); f′(z) = 1/(1 + z)</div></section><section class="formula-panel" data-formula-map="peirce" hidden=""><h2>Peirce composition</h2><div class="math-display" data-tex="\text{sphere}\longrightarrow\zeta\longrightarrow p\longrightarrow S(p)\longrightarrow w">Sphere → stereographic disk → half-plane → SC square → global arrangement</div></section>
+<p id="formula"></p>
+<footer>Figure 4.5, Vega Penagos &amp; Olivero Zapata (2015).
     Lunar imagery credit NASA / GSFC / Arizona State University.</footer>
-<nav class="example-route" aria-label="Example reading route"><a href="index.html">All examples</a><a href="../docs/lunar-thesis-outlines.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
+<nav aria-label="Example reading route" class="example-route"><a href="index.html">All examples</a><a href="../docs/lunar-thesis-outlines.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
 <script src="lunar-thesis-data.js"></script>
 <script>
   const byId = (id) => document.getElementById(id);

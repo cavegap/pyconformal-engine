@@ -1,10 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Disk to half-plane | PyConformal Engine</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Disk to half-plane | PyConformal Engine</title>
+<style>
     :root { font: 16px/1.5 "Inter", system-ui, sans-serif; color: #142e38; background: #f3f7f6; }
     * { box-sizing: border-box; }
     body { margin: 0; }
@@ -31,44 +32,44 @@
     #location { margin-block: 9px 16px; }
     @media (max-width: 620px) { .planes { grid-template-columns: 1fr; } }
   </style>
-<link rel="stylesheet" href="../web/math.css">
-<link rel="stylesheet" href="example-guide.css"></head>
+<link href="../web/math.css" rel="stylesheet"/>
+<link href="example-guide.css" rel="stylesheet"/></head>
 <body>
 <main>
-  <header>
-    <nav aria-label="Examples"><a href="index.html">PyConformal Engine</a> · <a href="square-map.html">The square map</a></nav>
-    <h1>From disk to half-plane</h1>
-    <p class="formula"><i>w</i> = <i>i</i>(1 − <i>z</i>)/(1 + <i>z</i>)</p>
-    <p>Drag P or use the sliders. Move to the unit circle to follow its image along the real axis.</p>
-  </header>
+<header>
+<nav aria-label="Examples"><a href="index.html">PyConformal Engine</a> · <a href="square-map.html">The square map</a></nav>
+<h1>From disk to half-plane</h1><aside class="case-purpose"><p class="case-kicker">What you can explore</p><p><strong>Choose a simpler domain for a problem.</strong> Track how a bounded disk becomes an unbounded half-plane. Read the boundary correspondence and pole before using the map in another calculation.</p></aside>
+<p class="formula"><i>w</i> = <i>i</i>(1 − <i>z</i>)/(1 + <i>z</i>)</p>
+<p>Drag P or use the sliders. Move to the unit circle to follow its image along the real axis.</p>
+</header>
 <section class="formula-panel"><h2>Cayley map</h2><div class="math-display" data-tex="f(z)=i\frac{1-z}{1+z},\qquad f^{\prime}(z)=\frac{-2i}{(1+z)^2}">f(z) = i(1 − z)/(1 + z); f′(z) = −2i/(1 + z)²</div><div class="math-display" data-tex="\operatorname{Im}f(z)=\frac{1-|z|^2}{|1+z|^2}&gt;0\quad (|z|&lt;1)">Im f(z) = (1 − |z|²)/|1 + z|² &gt; 0 for |z| &lt; 1</div><p>The open disk maps to the upper half-plane. The boundary point −1 is a pole, so its image is interpreted on the extended complex plane.</p><p class="notation-link"><a href="../docs/notation.md">Notation, domains and normalization</a></p></section>
-  <details><summary>Formula and reference points</summary><p>w = i(1 − z)/(1 + z), with Im w = (1 − |z|²)/|1 + z|². Thus the open unit disk maps into the upper half-plane. Reference points: 0 → i, i → 1, −i → −1, 1 → 0; −1 is the pole. Compare an interior point, a boundary point and the pole with the controls below.</p></details>
-  <section class="example-guide" aria-label="How to explore this example"><h2>How to explore this example</h2><ol><li><strong>Choose a point</strong><p>Click or drag in the disk. Radius and direction give an alternative way to move P.</p></li><li><strong>Follow P → P′</strong><p>Interior points go above the real axis. Use Move to boundary to see boundary points map onto that axis.</p></li><li><strong>Try the pole</strong><p>Move to pole sends P to −1. Its image is infinity, so there is no finite image marker.</p></li></ol><p class="guide-limit">Near the pole, P′ may lie beyond the plotted window. The location message distinguishes an off-screen finite point from infinity.</p></section><div class="planes">
-    <figure class="interactive-source">
-      <p class="interaction-badge">Move here · click or drag P inside the disk</p><figcaption>Source · unit disk</figcaption>
-      <canvas id="disk" role="img" aria-label="Disk with polar grid, point P, and pole at minus one"></canvas>
-    </figure>
-    <figure><p class="interaction-badge is-result">Linked image · follows the source</p>
-      <figcaption>Image · upper half-plane</figcaption>
-      <canvas id="half-plane" role="img" aria-label="Upper half-plane with mapped grid and image point P prime when visible"></canvas>
-    </figure>
-  </div>
-  <div class="controls">
-    <label for="radius">Radius <input id="radius" type="range" min="0" max="1" step=".001" value=".5"></label>
-    <label for="angle">Direction (degrees) <input id="angle" type="range" min="0" max="360" step=".1" value="65"></label>
-    <button id="boundary" type="button">Move to boundary</button>
-    <button id="pole" type="button">Move to pole</button>
-    <button id="reset" type="button">Reset</button>
-  </div>
-  <dl>
-    <div><dt>Radius · direction</dt><dd id="polar"></dd></div>
-    <div><dt>Point P</dt><dd id="point"></dd></div>
-    <div><dt>Image P′</dt><dd id="mapped"></dd></div>
-  </dl>
-  <p id="location" aria-live="polite"></p>
-  <footer>Vega Penagos &amp; Olivero Zapata (2015), §3.2, Example 1, Fig. 3.6.
+<section class="context-section"><h2>Formula and reference points</h2><p>w = i(1 − z)/(1 + z), with Im w = (1 − |z|²)/|1 + z|². Thus the open unit disk maps into the upper half-plane. Reference points: 0 → i, i → 1, −i → −1, 1 → 0; −1 is the pole. Compare an interior point, a boundary point and the pole with the controls.</p></section>
+<section aria-label="How to explore this example" class="example-guide"><h2>How to explore this example</h2><ol><li><strong>Choose a point</strong><p>Click or drag in the disk. Radius and direction give an alternative way to move P.</p></li><li><strong>Follow P → P′</strong><p>Interior points go above the real axis. Use Move to boundary to see boundary points map onto that axis.</p></li><li><strong>Try the pole</strong><p>Move to pole sends P to −1. Its image is infinity, so there is no finite image marker.</p></li></ol><p class="guide-limit">Near the pole, P′ may lie beyond the plotted window. The location message distinguishes an off-screen finite point from infinity.</p></section><div class="interactive-workspace"><div class="visual-stage"><div class="planes">
+<figure class="interactive-source">
+<p class="interaction-badge">Move here · click or drag P inside the disk</p><figcaption>Source · unit disk</figcaption>
+<canvas aria-label="Disk with polar grid, point P, and pole at minus one" id="disk" role="img"></canvas>
+</figure>
+<figure><p class="interaction-badge is-result">Linked image · follows the source</p>
+<figcaption>Image · upper half-plane</figcaption>
+<canvas aria-label="Upper half-plane with mapped grid and image point P prime when visible" id="half-plane" role="img"></canvas>
+</figure>
+</div></div><aside aria-label="Controls and readings" class="parameter-rail"><section class="parameter-controls"><h2>Controls</h2><div class="controls">
+<label for="radius">Radius <input id="radius" max="1" min="0" step=".001" type="range" value=".5"/></label>
+<label for="angle">Direction (degrees) <input id="angle" max="360" min="0" step=".1" type="range" value="65"/></label>
+<button id="boundary" type="button">Move to boundary</button>
+<button id="pole" type="button">Move to pole</button>
+<button id="reset" type="button">Reset</button>
+</div></section><div class="live-results"><dl>
+<div><dt>Radius · direction</dt><dd id="polar"></dd></div>
+<div><dt>Point P</dt><dd id="point"></dd></div>
+<div><dt>Image P′</dt><dd id="mapped"></dd></div>
+</dl><p aria-live="polite" id="location"></p></div></aside></div>
+
+
+
+<footer>Vega Penagos &amp; Olivero Zapata (2015), §3.2, Example 1, Fig. 3.6.
     Original Maple worksheet <code>disco.mw</code>.</footer>
-<nav class="example-route" aria-label="Example reading route"><a href="index.html">All examples</a><a href="../docs/thesis-guide.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
+<nav aria-label="Example reading route" class="example-route"><a href="index.html">All examples</a><a href="../docs/thesis-guide.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
 <script>
   const byId = (id) => document.getElementById(id);
   const disk = byId("disk");

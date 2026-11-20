@@ -1,10 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Schwarz–Christoffel square | PyConformal Engine</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Schwarz–Christoffel square | PyConformal Engine</title>
+<style>
     :root { font: 16px/1.5 "Inter", system-ui, sans-serif; color: #142e38; background: #f3f7f6; }
     * { box-sizing: border-box; }
     body { margin: 0; }
@@ -35,63 +36,63 @@
     .field-key { color: #915031; }
     @media (max-width: 620px) { .planes { grid-template-columns: 1fr; } }
   </style>
-<link rel="stylesheet" href="../web/math.css">
-<link rel="stylesheet" href="example-guide.css"></head>
+<link href="../web/math.css" rel="stylesheet"/>
+<link href="example-guide.css" rel="stylesheet"/></head>
 <body>
 <main>
-  <header>
-    <nav aria-label="Examples"><a href="index.html">PyConformal Engine</a> · <a href="exponential-map.html">The exponential map</a></nav>
-    <h1>From half-plane to square</h1>
-    <p>Drag P in the source plane or use the coordinate sliders. Select a prevertex to find its matching corner.</p>
-    <div class="presets" role="group" aria-label="Display mode">
-      <button id="geometry" type="button" aria-pressed="true">Mapping grid</button>
-      <button id="electrostatics" type="button" aria-pressed="false">Electrostatics</button>
-    </div>
-    <p id="field-legend" hidden><strong class="potential-key">Equipotentials</strong> ·
+<header>
+<nav aria-label="Examples"><a href="index.html">PyConformal Engine</a> · <a href="exponential-map.html">The exponential map</a></nav>
+<h1>From half-plane to square</h1><aside class="case-purpose"><p class="case-kicker">What you can explore</p><p><strong>Use a square as a reference domain.</strong> Match boundary points, inspect the normalization and carry a simple voltage problem through the map. This fixed square is a reproducible case for studying SC constructions.</p></aside>
+<p>Drag P in the source plane or use the coordinate sliders. Select a prevertex to find its matching corner.</p>
+
+<p hidden="" id="field-legend"><strong class="potential-key">Equipotentials</strong> ·
       <strong class="field-key">Electric field lines</strong> ·
       The field runs from the 1 V electrode to the 0 V electrode.</p>
-  </header>
+</header>
 <section class="formula-panel"><h2>Schwarz–Christoffel map</h2><div class="math-display" data-tex="S(z)=1+i-\frac{2i}{\kappa}R_F(z+1,z,z-1)">S(z) = 1 + i − (2i/κ) RF(z + 1, z, z − 1)</div><div class="math-display" data-tex="\kappa=R_F(0,1,2),\qquad z\in\mathbb{H}=\{z:\operatorname{Im}z&gt;0\}">κ = RF(0,1,2); Im z &gt; 0</div><p>Boundary values are limits from the upper half-plane. The target square has real and imaginary coordinates between −1 and 1. The interior reference is S(i) = 0.</p><p class="notation-link"><a href="../docs/notation.md">Notation, domains and normalization</a></p></section>
-  <details open><summary>The transformation and a physical example</summary>
-    <p>The displayed formula uses Carlson’s symmetric elliptic integral. The branch is analytic in the upper half-plane; the real-axis values are its boundary limits.</p>
-    <p>Corner correspondence: −1 → −1 + i; 0 → −1 − i; 1 → 1 − i; ∞ → 1 + i. The interior reference i maps to the center 0.</p>
-    <p>Try <strong>Electrostatics</strong>: V = (Im w + 1)/2 solves the unit-voltage square problem, with insulated vertical sides. Its pullback V(z) solves the corresponding half-plane problem. <a href="../docs/schwarz-christoffel-square.md">Normalization and verification</a></p>
-  </details>
-  <p><a href="schwarz-christoffel-heat.html">Second SC problem: steady heat conduction with varying edge temperatures</a></p>
-  <section class="example-guide" aria-label="How to explore this example"><h2>How to explore this example</h2><ol><li><strong>Choose P</strong><p>Move P with the source plot or coordinate sliders. The image P′ follows inside the square.</p></li><li><strong>Match the corners</strong><p>Select −1, 0, 1 or ∞. Corner labels name the source prevertex, not the target coordinate.</p></li><li><strong>Switch the model</strong><p>Mapping grid shows corresponding curves. Electrostatics replaces them with equipotentials and electric-field lines; the selected point is preserved.</p></li></ol><p class="guide-limit">The real axis uses boundary limits. Infinity is a boundary prevertex; it is not a finite point that can be dragged in the source window.</p></section><div class="planes">
-    <figure class="interactive-source">
-      <p class="interaction-badge">Move here · click or drag P in the half-plane</p><figcaption>Source · upper half-plane <small>The plot shows a finite window.</small></figcaption>
-      <canvas id="source" role="img" aria-label="Upper half-plane with the real boundary, prevertices and the selected point P"></canvas>
-    </figure>
-    <figure><p class="interaction-badge is-result">Linked image · follows the source</p>
-      <figcaption>Image · Schwarz–Christoffel square <small>Corner labels give their source prevertices.</small></figcaption>
-      <canvas id="image" role="img" aria-label="Square with labeled corners, mapped grid and the selected point P prime"></canvas>
-    </figure>
-  </div>
-  <div class="controls">
-    <label>Real part of P <input id="real" type="range" min="-3" max="3" step=".01" value=".55"></label>
-    <label>Imaginary part of P <input id="imag" type="range" min="0" max="3" step=".01" value=".65"></label>
-    <button id="boundary" type="button">Move to real axis</button>
-    <button id="reset" type="button">Reset</button>
-  </div>
-  <div class="presets" role="group" aria-label="Jump to a prevertex">
-    <strong>Prevertices</strong>
-    <button type="button" data-prevertex="-1" aria-pressed="false">−1</button>
-    <button type="button" data-prevertex="0" aria-pressed="false">0</button>
-    <button type="button" data-prevertex="1" aria-pressed="false">1</button>
-    <button type="button" data-prevertex="inf" aria-label="Infinity" aria-pressed="false">∞</button>
-  </div>
-  <dl>
-    <div><dt>Point P</dt><dd id="point"></dd></div>
-    <div><dt>Image P′</dt><dd id="mapped"></dd></div>
-    <div id="voltage-readout" hidden><dt>Potential at P and P′</dt><dd id="voltage"></dd></div>
-  </dl>
-  <p id="location" aria-live="polite"></p>
-  <footer>Vega Penagos &amp; Olivero Zapata (2015), §3.4, Fig. 3.17, p. 53.
+<section class="context-section"><h2>The transformation and a physical example</h2>
+<p>The displayed formula uses Carlson’s symmetric elliptic integral. The branch is analytic in the upper half-plane; the real-axis values are its boundary limits.</p>
+<p>Corner correspondence: −1 → −1 + i; 0 → −1 − i; 1 → 1 − i; ∞ → 1 + i. The interior reference i maps to the center 0.</p>
+<p>Try <strong>Electrostatics</strong>: V = (Im w + 1)/2 solves the unit-voltage square problem, with insulated vertical sides. Its pullback V(z) solves the corresponding half-plane problem. <a href="../docs/schwarz-christoffel-square.md">Normalization and verification</a></p>
+</section>
+<p><a href="schwarz-christoffel-heat.html">Second SC problem: steady heat conduction with varying edge temperatures</a></p>
+<section aria-label="How to explore this example" class="example-guide"><h2>How to explore this example</h2><ol><li><strong>Choose P</strong><p>Move P with the source plot or coordinate sliders. The image P′ follows inside the square.</p></li><li><strong>Match the corners</strong><p>Select −1, 0, 1 or ∞. Corner labels name the source prevertex, not the target coordinate.</p></li><li><strong>Switch the model</strong><p>Mapping grid shows corresponding curves. Electrostatics replaces them with equipotentials and electric-field lines; the selected point is preserved.</p></li></ol><p class="guide-limit">The real axis uses boundary limits. Infinity is a boundary prevertex; it is not a finite point that can be dragged in the source window.</p></section><div class="interactive-workspace"><div class="visual-stage"><div class="planes">
+<figure class="interactive-source">
+<p class="interaction-badge">Move here · click or drag P in the half-plane</p><figcaption>Source · upper half-plane <small>The plot shows a finite window.</small></figcaption>
+<canvas aria-label="Upper half-plane with the real boundary, prevertices and the selected point P" id="source" role="img"></canvas>
+</figure>
+<figure><p class="interaction-badge is-result">Linked image · follows the source</p>
+<figcaption>Image · Schwarz–Christoffel square <small>Corner labels give their source prevertices.</small></figcaption>
+<canvas aria-label="Square with labeled corners, mapped grid and the selected point P prime" id="image" role="img"></canvas>
+</figure>
+</div></div><aside aria-label="Controls and readings" class="parameter-rail"><section class="parameter-controls"><h2>Controls</h2><div aria-label="Display mode" class="presets" role="group">
+<button aria-pressed="true" id="geometry" type="button">Mapping grid</button>
+<button aria-pressed="false" id="electrostatics" type="button">Electrostatics</button>
+</div><div class="controls">
+<label>Real part of P <input id="real" max="3" min="-3" step=".01" type="range" value=".55"/></label>
+<label>Imaginary part of P <input id="imag" max="3" min="0" step=".01" type="range" value=".65"/></label>
+<button id="boundary" type="button">Move to real axis</button>
+<button id="reset" type="button">Reset</button>
+</div><div aria-label="Jump to a prevertex" class="presets" role="group">
+<strong>Prevertices</strong>
+<button aria-pressed="false" data-prevertex="-1" type="button">−1</button>
+<button aria-pressed="false" data-prevertex="0" type="button">0</button>
+<button aria-pressed="false" data-prevertex="1" type="button">1</button>
+<button aria-label="Infinity" aria-pressed="false" data-prevertex="inf" type="button">∞</button>
+</div></section><div class="live-results"><dl>
+<div><dt>Point P</dt><dd id="point"></dd></div>
+<div><dt>Image P′</dt><dd id="mapped"></dd></div>
+<div hidden="" id="voltage-readout"><dt>Potential at P and P′</dt><dd id="voltage"></dd></div>
+</dl><p aria-live="polite" id="location"></p></div></aside></div>
+
+
+
+
+<footer>Vega Penagos &amp; Olivero Zapata (2015), §3.4, Fig. 3.17, p. 53.
     <a href="../docs/schwarz-christoffel-square.md">Normalization and validation</a> ·
     <a href="../docs/square-electrostatics.md">Electrostatics notes</a> ·
     <a href="https://dlmf.nist.gov/19.32">NIST DLMF §19.32</a></footer>
-<nav class="example-route" aria-label="Example reading route"><a href="index.html">All examples</a><a href="../docs/schwarz-christoffel-square.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
+<nav aria-label="Example reading route" class="example-route"><a href="index.html">All examples</a><a href="../docs/schwarz-christoffel-square.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
 <script src="sc-square.js"></script>
 <script>
   const byId = (id) => document.getElementById(id);

@@ -1,10 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Coplanar capacitive sensor | PyConformal Engine</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Coplanar capacitive sensor | PyConformal Engine</title>
+<style>
     :root { font: 16px/1.5 Inter, system-ui, sans-serif; color: #142e38; background: #f3f7f6; }
     * { box-sizing: border-box; }
     body { margin: 0; }
@@ -35,49 +36,49 @@
     #status:empty { display: none; }
     @media (max-width: 560px) { canvas { aspect-ratio: 1.6; } }
   </style>
-<link rel="stylesheet" href="../web/math.css">
-<link rel="stylesheet" href="example-guide.css"></head>
+<link href="../web/math.css" rel="stylesheet"/>
+<link href="example-guide.css" rel="stylesheet"/></head>
 <body>
 <main>
-  <header>
-    <nav aria-label="Examples"><a href="index.html">PyConformal Engine</a> · <a href="coplanar-waveguide.html">Coplanar waveguide</a></nav>
-    <h1>Coplanar capacitive sensor</h1>
-    <p>Change the gap and see how two finite-width electrodes couple through a uniform dielectric.</p>
-  </header>
+<header>
+<nav aria-label="Examples"><a href="index.html">PyConformal Engine</a> · <a href="coplanar-waveguide.html">Coplanar waveguide</a></nav>
+<h1>Coplanar capacitive sensor</h1><aside class="case-purpose"><p class="case-kicker">What you can explore</p><p><strong>Separate a geometry effect from a dielectric effect.</strong> Change one input at a time and compare capacitance. The uniform-dielectric reference helps frame a sensing question; a partly inserted sample requires a spatial model and calibration.</p></aside>
+<p>Change the gap and see how two finite-width electrodes couple through a uniform dielectric.</p>
+</header>
 <section class="formula-panel"><h2>Ideal two-strip capacitance</h2><div class="math-display" data-tex="k=\frac{g}{g+2w_{\mathrm{t}}},\qquad k^{\prime}=\sqrt{1-k^2}">k = g/(g + 2wt); k′ = √(1 − k²)</div><div class="math-display" data-tex="C^{\prime}=\varepsilon_0\varepsilon_r\frac{K(k^{\prime})}{K(k)},\qquad C\approx L C^{\prime}">C′ = ε0 εr K(k′)/K(k); C ≈ L C′</div><p>Here g is the full gap, wₜ is the width of each strip, and L is its physical length in meters. K uses the same modulus convention as the waveguide formula; the geometrical definitions of k differ.</p><p class="notation-link"><a href="../docs/notation.md">Notation, domains and normalization</a></p></section>
-  <details open><summary>Where this helps · capacitive coupling and sensing</summary>
-    <p>Use this model to compare the coupling between two coplanar electrodes, study a spacing change, or estimate the response to a uniform change in dielectric permittivity. At fixed geometry, doubling εᵣ doubles C. The <strong>double-gap comparison</strong> shows the effect of moving the strips apart.</p>
-    <p>The equations above use the complete elliptic integral of the first kind, with its modulus convention stated explicitly.</p>
-    <div class="math-display" data-tex="F^{\prime}(\zeta)=\frac{A}{\sqrt{(\zeta-1)(\zeta+1)(\zeta-k)(\zeta+k)}}">F^{\prime}(\zeta)=\frac{A}{\sqrt{(\zeta-1)(\zeta+1)(\zeta-k)(\zeta+k)}}</div><div class="math-display" data-tex="\zeta=\frac{x+iy}{g/2+w_{\mathrm{t}}}">\zeta=\frac{x+iy}{g/2+w_{\mathrm{t}}}</div><p>The four square-root factors come from the SC geometry. The model fixes the normalization and phase. The drawn line density is illustrative and does not measure field magnitude.</p>
-    <p>A material sample or nearby object usually occupies only part of the field. That sensing application needs a layered or spatial dielectric model and calibration; this uniform model does not predict that response directly. <a href="../docs/coplanar-sensor.md">Derivation and independent validation</a> · <a href="coplanar-waveguide.html">Compare the 50 Ω guide</a></p>
-  </details>
-  <div class="controls">
-    <label>Electrode width (mm) <input id="width" type="number" min=".001" max="1000" step="any" value="1"></label>
-    <label>Gap between electrodes (mm) <input id="gap" type="number" min=".001" max="1000" step="any" value=".25"></label>
-    <label>Electrode length (mm) <input id="length" type="number" min=".001" max="1000" step="any" value="20"></label>
-    <label>Relative permittivity <input id="permittivity" type="number" min="1" max="30" step="any" value="3"></label>
-  </div>
-  <dl>
-    <div><dt>Capacitance per length</dt><dd id="per-length"></dd></div>
-    <div><dt>Capacitance for this length</dt><dd id="total"></dd></div>
-    <div><dt>Capacitance if gap doubles</dt><dd id="double-gap"></dd></div>
-  </dl>
-  <p id="status" aria-live="polite"></p>
-  <section class="example-guide" aria-label="How to explore this example"><h2>How to explore this example</h2><ol><li><strong>Change the geometry</strong><p>Edit electrode width, full gap g, length L and relative permittivity. Use the fields rather than dragging the drawing.</p></li><li><strong>Compare the outputs</strong><p>C′ is capacitance per length. C ≈ LC′ uses the entered length. The third value recomputes C for twice the gap.</p></li><li><strong>Read the colors</strong><p>The right red drive electrode is at 1 V; the left blue sense electrode is at 0 V. Field curves show direction, not quantitative density.</p></li></ol><p class="guide-limit">Larger uniform permittivity increases capacitance. A localized material sample needs a spatial dielectric model and calibration; this example does not predict that response.</p></section><figure><p class="interaction-badge is-result">Model output · edit the parameter fields</p>
-    <figcaption>Cross-section and electric field lines</figcaption>
-    <div class="diagram-key">
-      <span><i class="swatch drive" aria-hidden="true"></i> Drive · 1 V</span>
-      <span><i class="swatch sense" aria-hidden="true"></i> Sense · 0 V</span>
-      <span><i class="swatch field" aria-hidden="true"></i> Electric field direction</span>
-      <label><input id="show-field" type="checkbox" checked> Show field lines</label>
-    </div>
-    <canvas id="section" role="img" aria-label="Electric field lines curve from the right electrode at 1 volt to the left at 0 volts, above and below the two strips."></canvas>
-    <small id="dimensions"></small>
-  </figure>
-  <footer>Zero-thickness strips in a uniform dielectric. The length
+<section class="context-section"><h2>Where this helps · capacitive coupling and sensing</h2>
+<p>Use this model to compare the coupling between two coplanar electrodes, study a spacing change, or estimate the response to a uniform change in dielectric permittivity. At fixed geometry, doubling εᵣ doubles C. The <strong>double-gap comparison</strong> shows the effect of moving the strips apart.</p>
+<p>The equations above use the complete elliptic integral of the first kind, with its modulus convention stated explicitly.</p>
+<div class="math-display" data-tex="F^{\prime}(\zeta)=\frac{A}{\sqrt{(\zeta-1)(\zeta+1)(\zeta-k)(\zeta+k)}}">F^{\prime}(\zeta)=\frac{A}{\sqrt{(\zeta-1)(\zeta+1)(\zeta-k)(\zeta+k)}}</div><div class="math-display" data-tex="\zeta=\frac{x+iy}{g/2+w_{\mathrm{t}}}">\zeta=\frac{x+iy}{g/2+w_{\mathrm{t}}}</div><p>The four square-root factors come from the SC geometry. The model fixes the normalization and phase. The drawn line density is illustrative and does not measure field magnitude.</p>
+<p>A material sample or nearby object usually occupies only part of the field. That sensing application needs a layered or spatial dielectric model and calibration; this uniform model does not predict that response directly. <a href="../docs/coplanar-sensor.md">Derivation and independent validation</a> · <a href="coplanar-waveguide.html">Compare the 50 Ω guide</a></p>
+</section>
+
+
+
+<section aria-label="How to explore this example" class="example-guide"><h2>How to explore this example</h2><ol><li><strong>Change the geometry</strong><p>Edit electrode width, full gap g, length L and relative permittivity. Use the fields rather than dragging the drawing.</p></li><li><strong>Compare the outputs</strong><p>C′ is capacitance per length. C ≈ LC′ uses the entered length. The third value recomputes C for twice the gap.</p></li><li><strong>Read the colors</strong><p>The right red drive electrode is at 1 V; the left blue sense electrode is at 0 V. Field curves show direction, not quantitative density.</p></li></ol><p class="guide-limit">Larger uniform permittivity increases capacitance. A localized material sample needs a spatial dielectric model and calibration; this example does not predict that response.</p></section><div class="interactive-workspace"><div class="visual-stage"><figure><p class="interaction-badge is-result">Model output · edit the parameter fields</p>
+<figcaption>Cross-section and electric field lines</figcaption>
+<div class="diagram-key">
+<span><i aria-hidden="true" class="swatch drive"></i> Drive · 1 V</span>
+<span><i aria-hidden="true" class="swatch sense"></i> Sense · 0 V</span>
+<span><i aria-hidden="true" class="swatch field"></i> Electric field direction</span>
+<label><input checked="" id="show-field" type="checkbox"/> Show field lines</label>
+</div>
+<canvas aria-label="Electric field lines curve from the right electrode at 1 volt to the left at 0 volts, above and below the two strips." id="section" role="img"></canvas>
+<small id="dimensions"></small>
+</figure></div><aside aria-label="Controls and readings" class="parameter-rail"><section class="parameter-controls"><h2>Controls</h2><div class="controls">
+<label>Electrode width (mm) <input id="width" max="1000" min=".001" step="any" type="number" value="1"/></label>
+<label>Gap between electrodes (mm) <input id="gap" max="1000" min=".001" step="any" type="number" value=".25"/></label>
+<label>Electrode length (mm) <input id="length" max="1000" min=".001" step="any" type="number" value="20"/></label>
+<label>Relative permittivity <input id="permittivity" max="30" min="1" step="any" type="number" value="3"/></label>
+</div></section><div class="live-results"><dl>
+<div><dt>Capacitance per length</dt><dd id="per-length"></dd></div>
+<div><dt>Capacitance for this length</dt><dd id="total"></dd></div>
+<div><dt>Capacitance if gap doubles</dt><dd id="double-gap"></dd></div>
+</dl><p aria-live="polite" id="status"></p></div></aside></div>
+<footer>Zero-thickness strips in a uniform dielectric. The length
     estimate uses the two-dimensional solution and omits longitudinal end
     effects. <a href="../docs/coplanar-sensor.md">Model and numerical verification</a>.</footer>
-<nav class="example-route" aria-label="Example reading route"><a href="index.html">All examples</a><a href="../docs/coplanar-sensor.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
+<nav aria-label="Example reading route" class="example-route"><a href="index.html">All examples</a><a href="../docs/coplanar-sensor.md">Model and assumptions</a><a href="../docs/reproducibility.md">Reproduce</a><a href="../docs/sources-and-scope.md">Sources and scope</a></nav></main>
 <script>
   const byId = (id) => document.getElementById(id);
   const controls = ["width", "gap", "length", "permittivity"].map(byId);
