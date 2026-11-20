@@ -48,8 +48,8 @@ def test_english_is_static_default_and_spanish_has_native_link(tmp_path: Path) -
         json.dumps(
             {
                 "Read": "Leer",
-                "PyConformal Engine · Conceived and developed by César Augusto Vega Penagos.": (
-                    "PyConformal Engine · Ideado y desarrollado por César Augusto Vega Penagos."
+                "PyConformal · Conceived and developed by Cesar A. Vega Penagos.": (
+                    "PyConformal · Ideado y desarrollado por Cesar A. Vega Penagos."
                 ),
             }
         ),
@@ -72,4 +72,4 @@ def test_english_is_static_default_and_spanish_has_native_link(tmp_path: Path) -
     assert 'href="../index.html?lang=en"' in spanish
     assert not (output / "en").exists()
     assert english.count('class="project-credit"') == 1
-    assert "Ideado y desarrollado por César Augusto Vega Penagos" in spanish
+    assert "Ideado y desarrollado por Cesar A. Vega Penagos" in spanish

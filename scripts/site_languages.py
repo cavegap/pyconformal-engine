@@ -103,8 +103,12 @@ def editions(output: Path, root: Path) -> None:
         if relative.parts[0] == "es":
             continue
         original = page.read_text(encoding="utf-8")
+        original = original.replace(
+            "PyConformal Engine · Conceived and developed by César Augusto Vega Penagos.",
+            "PyConformal · Conceived and developed by Cesar A. Vega Penagos.",
+        )
         logo = posixpath.relpath(
-            (output / "assets/landing/pyconformal-mark.svg").as_posix(), page.parent.as_posix()
+            (output / "assets/landing/pyconformal-symbol.svg").as_posix(), page.parent.as_posix()
         )
         wordmark = posixpath.relpath(
             (output / "assets/landing/pyconformal-wordmark-dark.svg").as_posix(),
@@ -123,7 +127,7 @@ def editions(output: Path, root: Path) -> None:
             flags=re.DOTALL,
         )
         if 'class="project-credit"' not in original:
-            credit = '<p class="project-credit">PyConformal Engine · Conceived and developed by César Augusto Vega Penagos.</p>'
+            credit = '<p class="project-credit">PyConformal · Conceived and developed by Cesar A. Vega Penagos.</p>'
             if "</footer>" in original:
                 original = original.replace("</footer>", credit + "</footer>", 1)
             else:

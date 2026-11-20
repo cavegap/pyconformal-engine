@@ -2278,7 +2278,6 @@
   "Every experiment connects a question with a visualization, its equations and the limits of the model.": "Cada experimento conecta una pregunta con una visualización, sus ecuaciones y los límites del modelo.",
   "Explore the experiments": "Explorar los experimentos",
   "About PyConformal": "Acerca de PyConformal",
-  "What you see. What you change. What it means.": "Lo que ves. Lo que cambias. Lo que significa.",
   "PyConformal is an interactive laboratory for exploring complex geometry and its applications. Start with a visual question, try a change and connect the result to the mathematics behind it. You can begin by exploring the figures and open the equations when you want to go further.": "PyConformal es un laboratorio interactivo para explorar la geometría compleja y sus aplicaciones. Parte de una pregunta visual, prueba un cambio y conecta el resultado con la matemática que lo explica. Puedes comenzar explorando las figuras y abrir las ecuaciones cuando quieras profundizar.",
   "The website brings the experiments together. PyConformal Engine is the Python library behind the project, with code and reference cases for reproducing and extending the results.": "La web reúne los experimentos. PyConformal Engine es la biblioteca de Python del proyecto, con código y casos de referencia para reproducir y ampliar los resultados.",
   "Conceived and developed by César Augusto Vega Penagos. The mathematical and historical sources are credited in each case.": "Ideado y desarrollado por César Augusto Vega Penagos. Las fuentes matemáticas e históricas se reconocen en cada caso.",
@@ -2290,5 +2289,10 @@
   "Connect what you observe to a formula, its assumptions and a reproducible example.": "Relaciona lo que observas con una fórmula, sus hipótesis y un ejemplo reproducible.",
   "An interactive laboratory for exploring shapes, fields and maps through complex geometry.": "Un laboratorio interactivo para explorar formas, campos y mapas mediante la geometría compleja.",
   "PyConformal | Interactive mathematics lab": "PyConformal | Laboratorio interactivo de matemáticas",
-  "PyConformal geometric seal": "Sello geométrico de PyConformal"
+  "PyConformal geometric seal": "Sello geométrico de PyConformal",
+  "PyConformal · Conceived and developed by Cesar A. Vega Penagos.": "PyConformal · Ideado y desarrollado por Cesar A. Vega Penagos.",
+  "Conceived and developed by Cesar A. Vega Penagos. The mathematical and historical sources are credited in each case.": "Ideado y desarrollado por Cesar A. Vega Penagos. Las fuentes matemáticas e históricas se reconocen en cada caso.",
+  "PyConformal · Research preview v0.1.0a1": "PyConformal · Versión preliminar de investigación v0.1.0a1",
+  "Explore the mathematics behind each transformation.": "Explora la matemática detrás de cada transformación.",
+  "Explore the source code, examples and reproduction instructions on GitHub.": "Explora el código fuente, los ejemplos y las instrucciones para reproducirlos en GitHub."
 }

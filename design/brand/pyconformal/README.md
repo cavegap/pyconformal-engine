@@ -1,6 +1,6 @@
 # Identidad final de PyConformal
 
-Selección de César Augusto Vega Penagos, 20 de noviembre de 2026. Conserva la silueta del monograma y la superficie de la referencia elegida, con retícula azul mineral, letras verdes y punto cobre. En el nombre, la f se sustituye por la f matemática cursiva. La marca se sigue escribiendo y leyendo PyConformal. La biblioteca y sus citas conservan PyConformal Engine.
+Selección de Cesar A. Vega Penagos, 20 de noviembre de 2026. Conserva la silueta del monograma y la superficie de la referencia elegida, con retícula azul mineral, letras verdes y punto cobre. En el nombre, la f se sustituye por la f matemática cursiva. La marca se sigue escribiendo y leyendo PyConformal. La biblioteca y sus citas conservan PyConformal Engine.
 
 ## Archivos necesarios
 

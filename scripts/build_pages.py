@@ -362,7 +362,7 @@ def document(content: str, source: Path, root: Path) -> str:
 <main class="document"><p class="breadcrumb"><a href="{root_link("index.html")}">Home</a> / Companion</p>
 {body}
 <p class="source-link"><a href="{source_url}">Read this page in the repository</a></p></main>
-<footer class="site-footer"><p class="project-credit">PyConformal Engine · Conceived and developed by César Augusto Vega Penagos.</p></footer></body></html>'''
+<footer class="site-footer"><p class="project-credit">PyConformal · Conceived and developed by Cesar A. Vega Penagos.</p></footer></body></html>'''
     return rewrite(page, source, root)
 
 
